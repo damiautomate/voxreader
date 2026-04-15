@@ -6,56 +6,47 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0F0F14">
 <title>VoxReader</title>
-<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&family=Lora:wght@400;600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
 :root{--bg:#0F0F14;--s:#181820;--t:#E4E0D7;--t2:#6E6A62;--t3:#3E3B36;--ac:#D08C30;--acl:rgba(208,140,48,.1);--acg:rgba(208,140,48,.25);--hl:rgba(208,140,48,.14);--hla:rgba(208,140,48,.3);--bd:rgba(255,255,255,.05);--sh:rgba(0,0,0,.5);--gl:rgba(15,15,20,.96);--ch:#D08C30;--pb:#252530;--fb:'Literata',serif;--fu:'DM Sans',sans-serif;--fs:18px;--lh:1.8}
 [data-th=light]{--bg:#F7F5EE;--s:#FFF;--t:#2A2722;--t2:#8A8478;--t3:#C5BFB5;--ac:#B0621E;--acl:rgba(176,98,30,.08);--acg:rgba(176,98,30,.2);--hl:rgba(255,200,60,.28);--hla:rgba(255,180,60,.42);--bd:rgba(0,0,0,.06);--sh:rgba(0,0,0,.04);--gl:rgba(247,245,238,.95);--ch:#7A4518;--pb:#E6E2D8}
-[data-th=sepia]{--bg:#E8DDCA;--s:#DED2BA;--t:#3E3020;--t2:#7A654A;--t3:#A08C6D;--ac:#7B3510;--acl:rgba(123,53,16,.08);--acg:rgba(123,53,16,.18);--hl:rgba(160,100,35,.18);--hla:rgba(160,100,35,.3);--bd:rgba(62,48,32,.08);--sh:rgba(62,48,32,.06);--gl:rgba(232,221,202,.95);--ch:#5A2D0C;--pb:#CCC0A6}
+[data-th=sepia]{--bg:#E8DDCA;--s:#DED2BA;--t:#3E3020;--t2:#7A654A;--ac:#7B3510;--acl:rgba(123,53,16,.08);--acg:rgba(123,53,16,.18);--hl:rgba(160,100,35,.18);--hla:rgba(160,100,35,.3);--bd:rgba(62,48,32,.08);--sh:rgba(62,48,32,.06);--gl:rgba(232,221,202,.95);--ch:#5A2D0C;--pb:#CCC0A6}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--t);font-family:var(--fu);min-height:100dvh}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
-
 .bar{position:sticky;top:0;z-index:100;background:var(--gl);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);padding:8px 14px}
 .bar-in{max-width:780px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
-.logo{font-size:17px;font-weight:700;color:var(--ac);font-family:var(--fb);letter-spacing:-.4px}
-.fname{font-size:10px;color:var(--t2);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-left:6px}
+.logo{font-size:17px;font-weight:700;color:var(--ac);font-family:var(--fb)}
+.fname{font-size:10px;color:var(--t2);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-left:6px}
 .btns{display:flex;gap:1px}
 .ib{background:none;border:none;cursor:pointer;padding:6px;border-radius:6px;color:var(--t2);display:flex;align-items:center}
 .ib.on{background:var(--acl);color:var(--ac)}
 .ub{cursor:pointer;padding:5px 9px;border-radius:6px;display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;background:var(--acl);border:1px solid var(--bd);color:var(--t2);font-family:var(--fu)}
 .ub input{display:none}
 .top-prg{position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--bd)}
-.top-fill{height:100%;background:var(--ac);transition:width .4s;border-radius:2px}
-
+.top-fill{height:100%;background:var(--ac);transition:width .4s}
 .pnl{display:none;position:sticky;top:47px;z-index:90;background:var(--s);border-bottom:1px solid var(--bd);padding:12px 14px;animation:sd .2s}
 .pnl.open{display:block}
 .pnl-in{max-width:780px;margin:0 auto}
-.pnl-t{font-size:10px;font-weight:700;color:var(--t2);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase}
+.pnl-t{font-size:10px;font-weight:700;color:var(--t2);letter-spacing:1px;margin-bottom:8px}
+.pnl-scr{max-height:260px;overflow-y:auto}
 @keyframes sd{from{opacity:0;transform:translateY(-6px)}}
 .pill{padding:4px 11px;border-radius:14px;border:1px solid var(--bd);background:transparent;color:var(--t2);cursor:pointer;font-size:11px;font-weight:600;font-family:var(--fu)}
 .pill.on{border-color:var(--ac);background:var(--acl);color:var(--ac)}
 .sr{display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap}
-.sl{font-size:10px;font-weight:700;color:var(--t2);min-width:42px;letter-spacing:.3px}
+.sl{font-size:10px;font-weight:700;color:var(--t2);min-width:42px}
 select{padding:3px 7px;border-radius:6px;border:1px solid var(--bd);background:var(--bg);color:var(--t);font-size:12px;font-family:var(--fu);outline:none}
-input[type=range]{accent-color:var(--ac);height:3px;min-width:40px}
-input[type=text]{padding:4px 8px;border-radius:6px;border:1px solid var(--bd);background:var(--bg);color:var(--t);font-size:11px;font-family:var(--fu);outline:none;width:100%;max-width:260px}
-
-/* chapter list */
 .chi{display:block;width:100%;text-align:left;padding:9px 11px;border-radius:8px;border:none;background:transparent;cursor:pointer;margin-bottom:2px;font-family:var(--fu);color:var(--t)}
 .chi:hover,.chi.cur{background:var(--acl)}
 .chi .nm{font-size:13px;font-family:var(--fb)}.chi.cur .nm{font-weight:600;color:var(--ac)}
-.chi .dr{font-size:10px;color:var(--t2)}
 .cbar{flex:1;height:3px;border-radius:2px;background:var(--pb);overflow:hidden}
-.cfill{height:100%;border-radius:2px;background:var(--t2);transition:width .3s}
-.chi.cur .cfill{background:var(--ac)}
+.cfill{height:100%;border-radius:2px;transition:width .3s}
+.chi .cfill{background:var(--t2)}.chi.cur .cfill{background:var(--ac)}
 .cpct{font-size:10px;color:var(--t2);min-width:26px;text-align:right}
 .cdot{width:7px;height:7px;border-radius:50%;background:var(--ac);animation:pls 1s infinite;flex-shrink:0}
 @keyframes pls{0%,100%{opacity:.4}50%{opacity:1}}@keyframes spn{to{transform:rotate(360deg)}}
-
-/* content */
-.cnt{max-width:700px;margin:0 auto;padding:20px 16px 270px}
-.sts{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:5px;margin-bottom:16px;padding:8px 11px;border-radius:9px;background:var(--acl);border:1px solid var(--bd);font-size:12px;color:var(--t2)}
+.cnt{max-width:700px;margin:0 auto;padding:20px 16px 280px}
 .bp{position:relative;padding:8px 12px;margin:2px 0;border-radius:6px;border-left:3px solid transparent;cursor:pointer;transition:all .25s}
 .bp:hover{background:var(--hl)}
 .bp.act{background:var(--hla);border-left-color:var(--ac);box-shadow:0 2px 8px var(--sh)}
@@ -66,18 +57,18 @@ input[type=text]{padding:4px 8px;border-radius:6px;border:1px solid var(--bd);ba
 .bsk{padding:3px 9px;margin:2px 0;border-radius:4px;background:rgba(255,82,82,.05);border:1px dashed rgba(255,82,82,.12);font-size:10px;color:var(--t2);opacity:.5;font-style:italic}
 .bmb{position:absolute;top:5px;right:3px;background:none;border:none;cursor:pointer;padding:2px;color:var(--bd);opacity:0;transition:opacity .15s}
 .bp:hover .bmb{opacity:.5}.bmb:hover{opacity:1!important}.bmb.has{opacity:1!important;color:var(--ac)}
-@media(max-width:480px){.bmb{opacity:.25}.bmb.has{opacity:1}.fname{display:none}}
-
-/* PLAYER */
+@media(max-width:480px){.bmb{opacity:.3}.bmb.has{opacity:1}.fname{display:none}}
+.pdf-sync{max-width:700px;margin:0 auto 16px;text-align:center}
+.pdf-sync img{width:100%;max-width:500px;border-radius:8px;box-shadow:0 2px 12px var(--sh);border:1px solid var(--bd)}
+.gen-bar{margin:8px 0;padding:8px 12px;border-radius:8px;background:var(--acl);border:1px solid var(--bd)}
+.gen-info{font-size:12px;color:var(--t2);margin-bottom:5px;display:flex;justify-content:space-between}
+.gen-track{height:4px;border-radius:2px;background:var(--pb);overflow:hidden}
+.gen-fill{height:100%;background:var(--ac);transition:width .3s}
 .player{position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--gl);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--bd);box-shadow:0 -4px 20px var(--sh);padding:0 14px;padding-bottom:max(6px,env(safe-area-inset-bottom))}
 .pl-in{max-width:780px;margin:0 auto}
-
-/* chapter label + book progress */
 .pl-top{display:flex;justify-content:space-between;align-items:center;padding:7px 0 0;font-size:11px}
 .pl-ch{color:var(--ac);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
 .pl-bk{color:var(--t2);flex-shrink:0;margin-left:8px}
-
-/* scrubber = CURRENT CHAPTER */
 .sc-wrap{display:flex;align-items:center;gap:7px;padding:5px 0 2px}
 .sc-t{font-size:10px;color:var(--t2);font-weight:500;min-width:32px;font-variant-numeric:tabular-nums}
 .sc-t.r{text-align:right}
@@ -86,536 +77,382 @@ input[type=text]{padding:4px 8px;border-radius:6px;border:1px solid var(--bd);ba
 .sc-fl{height:100%;border-radius:2px;background:var(--ac);position:relative;transition:width .12s}
 .sc-th{position:absolute;right:-8px;top:50%;transform:translateY(-50%);width:16px;height:16px;border-radius:50%;background:var(--ac);box-shadow:0 2px 8px var(--acg)}
 .sc-trk:active .sc-th{transform:translateY(-50%) scale(1.3)}
-
-/* controls */
 .pl-ct{display:flex;align-items:center;justify-content:center;gap:2px;padding:2px 0 5px}
 .cb{background:none;border:none;cursor:pointer;color:var(--t);padding:5px;display:flex;align-items:center}
-.cb:disabled{color:var(--t3);cursor:default}
-.cb svg{width:22px;height:22px}
-.pb{width:54px;height:54px;border-radius:50%;background:var(--ac);border:none;cursor:pointer;color:var(--bg);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px var(--acg);margin:0 6px}
-.pb:active{transform:scale(.9)}
-.pb svg{width:26px;height:26px}
+.cb:disabled{color:var(--t3);cursor:default}.cb svg{width:22px;height:22px}
+.pb-btn{width:54px;height:54px;border-radius:50%;background:var(--ac);border:none;cursor:pointer;color:var(--bg);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px var(--acg);margin:0 6px}
+.pb-btn:active{transform:scale(.9)}.pb-btn svg{width:26px;height:26px}
 .skb{position:relative;padding:5px;background:none;border:none;cursor:pointer;color:var(--t);display:flex;align-items:center}
 .skb:disabled{color:var(--t3)}.skb svg{width:28px;height:28px}
 .skb span{position:absolute;font-size:8px;font-weight:700;top:50%;left:50%;transform:translate(-50%,-50%);margin-top:1px}
 .spc{background:var(--acl);border:1px solid var(--bd);border-radius:12px;padding:3px 8px;cursor:pointer;color:var(--ac);font-size:11px;font-weight:700;min-width:32px;text-align:center;font-family:var(--fu);margin-left:4px}
-
-/* ── ADDED: voice preview button ── */
-.vprev{padding:4px 10px;border-radius:14px;border:1px solid var(--bd);background:transparent;color:var(--t2);cursor:pointer;font-size:11px;font-weight:600;font-family:var(--fu);white-space:nowrap}
-.vprev:hover{border-color:var(--ac);color:var(--ac)}
-/* ── ADDED: background status badge ── */
-.bgst{font-size:9px;padding:2px 7px;border-radius:99px;font-weight:600;margin-left:4px}
-.bgst.ok{background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid rgba(90,158,111,.3)}
-.bgst.no{background:rgba(208,140,48,.1);color:var(--ac);border:1px solid var(--bd)}
-
-.empty{text-align:center;padding:50px 16px}
-.eic{width:68px;height:68px;border-radius:18px;background:var(--acl);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
-.et{font-size:19px;font-weight:600;margin-bottom:5px;font-family:var(--fb)}
-.es{font-size:13px;color:var(--t2);max-width:330px;margin:0 auto 18px;line-height:1.5}
-.ebt{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.bo{display:inline-flex;align-items:center;gap:4px;padding:8px 18px;border-radius:20px;cursor:pointer;border:2px solid var(--ac);background:transparent;color:var(--ac);font-size:13px;font-weight:600;font-family:var(--fu)}
-.bo input{display:none}
-.bf{display:inline-flex;align-items:center;gap:4px;padding:8px 18px;border-radius:20px;border:none;cursor:pointer;background:var(--ac);color:var(--bg);font-size:13px;font-weight:600;font-family:var(--fu);box-shadow:0 3px 14px var(--acg)}
-.ai-s{font-size:9px;display:inline-flex;align-items:center;gap:3px;margin-left:6px}
 .spinner{width:34px;height:34px;border:3px solid var(--bd);border-top-color:var(--ac);border-radius:50%;animation:spn .7s linear infinite;margin:0 auto 12px}
 .bdg{position:absolute;top:1px;right:1px;width:6px;height:6px;border-radius:50%;background:var(--ac)}
-.pnl-scr{max-height:260px;overflow-y:auto}
+
+/* KEY SETUP BOX */
+.key-box{padding:16px;border-radius:12px;background:var(--s);border:1px solid var(--bd);margin-bottom:16px}
+.key-box h3{font-size:14px;color:var(--ac);margin-bottom:8px;font-family:var(--fb)}
+.key-row{display:flex;gap:6px;margin-bottom:6px}
+.key-input{flex:1;padding:8px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--t);font-size:13px;font-family:var(--fu);outline:none}
+.key-input:focus{border-color:var(--ac)}
+.key-btn{padding:8px 14px;border-radius:8px;border:none;cursor:pointer;font-size:12px;font-weight:600;font-family:var(--fu)}
+.key-save{background:var(--ac);color:var(--bg)}
+.key-test{background:var(--acl);color:var(--ac);border:1px solid var(--bd)}
+.key-status{font-size:11px;margin-top:4px;min-height:16px}
+.key-ok{color:#5cb85c}.key-err{color:#e74c3c}.key-wait{color:var(--ac)}
+.key-hint{font-size:11px;color:var(--t2);margin-top:4px;line-height:1.4}
+.key-hint a{color:var(--ac)}
 </style>
 </head>
 <body data-th="dark">
+<audio id="aud" preload="auto"></audio>
 <div class="bar"><div class="bar-in">
-  <div style="display:flex;align-items:center"><span class="logo">VoxReader</span><span class="fname" id="fn"></span><span id="aiB"></span></div>
+  <div style="display:flex;align-items:center"><span class="logo">VoxReader</span><span class="fname" id="fn"></span></div>
   <div class="btns">
     <label class="ub"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>PDF<input type="file" accept=".pdf" id="fIn"></label>
-    <button class="ib" id="bV" style="display:none" title="PDF pages"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 2h7l5 5v13a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2z"/></svg></button>
-    <button class="ib" id="bC" title="Chapters"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 18v-6a9 9 0 0118 0v6M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3v5zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3v5z"/></svg></button>
-    <button class="ib" id="bB" title="Bookmarks" style="position:relative"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg><span class="bdg" id="bD" style="display:none"></span></button>
-    <button class="ib" id="bS" title="Settings"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></button>
+    <button class="ib" id="bPg" style="display:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 2h7l5 5v13a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2z"/></svg></button>
+    <button class="ib" id="bChBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 18v-6a9 9 0 0118 0v6M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3v5zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3v5z"/></svg></button>
+    <button class="ib" id="bBmBtn" style="position:relative"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg><span class="bdg" id="bDot" style="display:none"></span></button>
+    <button class="ib" id="bSetBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></button>
   </div>
 </div><div class="top-prg"><div class="top-fill" id="tF"></div></div></div>
 
-<div class="pnl" id="pS"><div class="pnl-in" id="sB"></div></div>
-<div class="pnl" id="pC"><div class="pnl-in"><div class="pnl-t">Chapters</div><div class="pnl-scr" id="cL"></div></div></div>
-<div class="pnl" id="pB"><div class="pnl-in"><div class="pnl-t">Bookmarks · <span id="bN">0</span></div><div class="pnl-scr" id="bL"></div></div></div>
-<div class="pnl" id="pP" style="max-height:none;position:relative;top:auto"><div class="pnl-in" id="pPg" style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px 0 130px"></div></div>
-
+<div class="pnl" id="pnlSet"><div class="pnl-in" id="setBox"></div></div>
+<div class="pnl" id="pnlCh"><div class="pnl-in"><div class="pnl-t">CHAPTERS</div><div class="pnl-scr" id="cL"></div></div></div>
+<div class="pnl" id="pnlBm"><div class="pnl-in"><div class="pnl-t">BOOKMARKS · <span id="bN">0</span></div><div class="pnl-scr" id="bL"></div></div></div>
 <div class="cnt" id="ct"></div>
 
 <div class="player"><div class="pl-in">
-  <div class="pl-top">
-    <span class="pl-ch" id="pCh">Tap a paragraph to begin</span>
-    <span class="pl-bk" id="pBk"></span>
-  </div>
+  <div class="pl-top"><span class="pl-ch" id="pCh">Upload a PDF & set your TTS key above</span><span class="pl-bk" id="pBk"></span></div>
   <div class="sc-wrap">
     <span class="sc-t" id="sEl">0:00</span>
     <div class="sc-trk" id="sTk"><div class="sc-rail"><div class="sc-fl" id="sFl" style="width:0%"><div class="sc-th"></div></div></div></div>
     <span class="sc-t r" id="sRe">0:00</span>
   </div>
   <div class="pl-ct">
-    <button class="cb" id="xPC" disabled title="Prev chapter"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
-    <button class="skb" id="xRw" disabled title="Back 30s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4v6h6M3.51 15a9 9 0 105.64-8.36L3 10"/></svg><span>30</span></button>
-    <button class="pb" id="xPl"><svg viewBox="0 0 24 24" fill="currentColor" id="pIc"><path d="M8 5v14l11-7z"/></svg></button>
-    <button class="skb" id="xFw" disabled title="Fwd 30s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 4v6h-6M20.49 15a9 9 0 11-5.64-8.36L21 10"/></svg><span>30</span></button>
-    <button class="cb" id="xNC" disabled title="Next chapter"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
+    <button class="cb" id="xPC" disabled><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+    <button class="skb" id="xRw" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4v6h6M3.51 15a9 9 0 105.64-8.36L3 10"/></svg><span>30</span></button>
+    <button class="pb-btn" id="xPl"><svg viewBox="0 0 24 24" fill="currentColor" id="pIc"><path d="M8 5v14l11-7z"/></svg></button>
+    <button class="skb" id="xFw" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 4v6h-6M20.49 15a9 9 0 11-5.64-8.36L21 10"/></svg><span>30</span></button>
+    <button class="cb" id="xNC" disabled><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
     <button class="spc" id="xSp">1x</button>
   </div>
 </div></div>
 
 <script>
-/* ══════════════ STATE ══════════════ */
-let BK=[],PI=[],CH=[],RI=[];
-let on=false,cur=-1,spd=1,sm=true,np=true,bm=new Set();
-let VV=[],SV=null,fs=18,ff='Literata',th='dark',apiKey='';
-const SP=[.5,.75,1,1.25,1.5,2,2.5,3];
+(function(){
+"use strict";
+/* ══════ STATE ══════ */
+var BK=[], PI=[], CH=[], RI=[];
+var playing=false, curIdx=-1, spd=1, smartMode=true, showPdfSync=false, fontSize=18;
+var gKey='', voiceName='en-US-Neural2-D';
+var bookmarks=new Set();
+var audioCache={}, playlist=[], plPos=-1, chDurs=[];
+var AUD, scDrag=false;
+var SP=[0.75,1,1.25,1.5,2];
+var VOICES=['en-US-Neural2-D','en-US-Neural2-A','en-US-Neural2-C','en-US-Neural2-F','en-US-Neural2-H','en-US-Neural2-I','en-GB-Neural2-A','en-GB-Neural2-B','en-GB-Neural2-C','en-GB-Neural2-D','en-US-Standard-A','en-US-Standard-D','en-US-Standard-F','en-GB-Standard-A','en-GB-Standard-B'];
 
-/* ══════════════════════════════════════════════════════
-   ADDED BLOCK 1 — BACKGROUND AUDIO KEEPALIVE
-   Plays a near-silent looping audio buffer via Web Audio
-   API. This registers the browser as an active audio
-   player with the OS, preventing it from suspending
-   the tab when you switch apps or lock the screen.
-   Nothing in the original code is changed — this runs
-   independently and starts on first play.
-══════════════════════════════════════════════════════ */
-let _bgCtx = null;
-let _bgSrc  = null;
-let _bgStarted = false;
+/* ══════ PERSIST ══════ */
+function trySave(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function tryLoad(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 
-function startBgAudio() {
-  if (_bgStarted) return;
-  try {
-    _bgCtx = new (window.AudioContext || window.webkitAudioContext)();
-    // 0.5 s silent buffer, looped — just enough to hold the audio session
-    const buf = _bgCtx.createBuffer(1, Math.floor(_bgCtx.sampleRate * 0.5), _bgCtx.sampleRate);
-    // samples are 0 by default → completely silent
-    _bgSrc = _bgCtx.createBufferSource();
-    _bgSrc.buffer = buf;
-    _bgSrc.loop   = true;
-    // tiny gain so some browsers don't optimise it away
-    const gain = _bgCtx.createGain();
-    gain.gain.value = 0.001;
-    _bgSrc.connect(gain);
-    gain.connect(_bgCtx.destination);
-    _bgSrc.start(0);
-    _bgStarted = true;
-  } catch(e) { console.log('[BgAudio]', e); }
-}
-
-function stopBgAudio() {
-  try { if (_bgSrc) { _bgSrc.stop(); _bgSrc = null; } } catch(e){}
-  try { if (_bgCtx) { _bgCtx.close(); _bgCtx = null; } } catch(e){}
-  _bgStarted = false;
-}
-
-/* ══════════════════════════════════════════════════════
-   ADDED BLOCK 2 — MEDIA SESSION API
-   Registers VoxReader as a proper media player with the
-   phone's OS. This gives you:
-     • Play/pause button on the lock screen
-     • Next/previous chapter on lock screen & earbuds
-     • The OS keeps the audio session alive longer
-   Called each time a new paragraph starts speaking.
-══════════════════════════════════════════════════════ */
-function updateMediaSession(title) {
-  if (!('mediaSession' in navigator)) return;
-  const bookName = document.getElementById('fn').textContent || 'VoxReader';
-  navigator.mediaSession.metadata = new MediaMetadata({
-    title : title || bookName,
-    artist: 'VoxReader',
-    album : bookName,
-  });
-  navigator.mediaSession.playbackState = 'playing';
-
-  // Lock-screen / earphone button handlers
-  const safe = fn => { try { navigator.mediaSession.setActionHandler(fn[0], fn[1]); } catch(e){} };
-  safe(['play',          () => { if (!on) strt(cur >= 0 ? cur : RI[0]); }]);
-  safe(['pause',         () => { if (on)  stp(); }]);
-  safe(['stop',          () => stp()]);
-  safe(['nexttrack',     () => { const c = curCI(); if (c + 1 < CH.length) JC(c + 1); }]);
-  safe(['previoustrack', () => { const c = curCI(); if (c > 0) JC(c - 1); }]);
-  safe(['seekforward',   () => sk30(1)]);
-  safe(['seekbackward',  () => sk30(-1)]);
-}
-
-function pauseMediaSession() {
-  if (!('mediaSession' in navigator)) return;
-  navigator.mediaSession.playbackState = 'paused';
-}
-
-/* ══════════════════════════════════════════════════════
-   ADDED BLOCK 3 — VOICE PREVIEW
-   prvVoice() speaks a short sample sentence in the
-   currently selected voice so the user can audition
-   it before committing. Called from the settings panel.
-══════════════════════════════════════════════════════ */
-window.prvVoice = function() {
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(
-    'The morning light crept across the rooftops, and he felt something inside him begin to loosen.'
-  );
-  u.rate  = spd;
-  u.pitch = 1.05;
-  if (SV) u.voice = SV;
-  speechSynthesis.speak(u);
-};
-
-/* ══════════════ PDF EXTRACT ══════════════ */
-async function exPDF(f){
+/* ══════ PDF EXTRACT ══════ */
+function exPDF(file){
   pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-  const pdf=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;
-  const pgs=[],raw=[];
-  for(let p=1;p<=pdf.numPages;p++){
-    const pg=await pdf.getPage(p),vp=pg.getViewport({scale:1.5}),cv=document.createElement('canvas');
-    cv.width=vp.width;cv.height=vp.height;
-    await pg.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
-    pgs.push(cv.toDataURL('image/jpeg',.8));
-    const tc=await pg.getTextContent(),ph=pg.view[3];
-    const lns=[];let cl=[],ly=null;
-    for(const it of tc.items){if(!it.str)continue;
-      const y=Math.round(it.transform[5]),h=it.height||it.transform[0];
-      if(ly!==null&&Math.abs(y-ly)>h*.5){if(cl.length)lns.push([...cl]);cl=[];}
-      cl.push({s:it.str,x:it.transform[4],w:it.width,h,y});ly=y;}
-    if(cl.length)lns.push([...cl]);
-    for(const ln of lns){
-      ln.sort((a,b)=>a.x-b.x);let tx='',pe=0;
-      for(let i=0;i<ln.length;i++){const it=ln[i],g=it.x-pe,cw=it.w/Math.max(it.s.length,1);
-        if(i>0&&g>cw*.3)tx+=' ';tx+=it.s;pe=it.x+it.w;}
-      const y=ln[0].y,h=ln[0].h,tr=tx.trim();if(!tr||tr.length<2)continue;
-      let tp='text';if(y>ph*.88)tp='header';else if(y<ph*.07)tp='footer';
-      else if(h>15&&tr.length<100)tp='heading';
-      raw.push({type:tp,text:tr,h});}}
-  const mg=[];let bf='';
-  for(const b of raw){
-    if(b.type==='header'||b.type==='footer'){if(bf.trim())mg.push({type:'paragraph',text:bf.trim()});bf='';mg.push(b);continue;}
-    if(b.type==='heading'){if(bf.trim())mg.push({type:'paragraph',text:bf.trim()});bf='';mg.push({type:'chapter',text:b.text});continue;}
-    if(bf.endsWith('-'))bf=bf.slice(0,-1)+b.text;
-    else if(bf&&!/[.!?":;]$/.test(bf))bf+=' '+b.text;
-    else{if(bf.trim())mg.push({type:'paragraph',text:bf.trim()});bf=b.text;}}
-  if(bf.trim())mg.push({type:'paragraph',text:bf.trim()});
-  return{blocks:mg.filter(b=>b.text.length>3),pages:pgs};}
+  return file.arrayBuffer().then(function(buf){return pdfjsLib.getDocument({data:buf}).promise;})
+  .then(function(pdf){
+    var pgs=[],raw=[],chain=Promise.resolve();
+    for(var p=1;p<=pdf.numPages;p++)(function(pn){
+      chain=chain.then(function(){return pdf.getPage(pn).then(function(pg){
+        var vp=pg.getViewport({scale:1.5}),cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;
+        return pg.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise.then(function(){pgs.push(cv.toDataURL('image/jpeg',.8));return pg.getTextContent();})
+        .then(function(tc){
+          var ph=pg.view[3],lns=[],cl=[],ly=null;
+          tc.items.forEach(function(it){if(!it.str)return;var y=Math.round(it.transform[5]),h=it.height||it.transform[0];
+            if(ly!==null&&Math.abs(y-ly)>h*.5){if(cl.length)lns.push(cl.slice());cl=[];}
+            cl.push({s:it.str,x:it.transform[4],w:it.width,h:h,y:y});ly=y;});
+          if(cl.length)lns.push(cl.slice());
+          lns.forEach(function(ln){ln.sort(function(a,b){return a.x-b.x;});var tx='',pe=0;
+            for(var i=0;i<ln.length;i++){var it=ln[i],g=it.x-pe,cw=it.w/Math.max(it.s.length,1);if(i>0&&g>cw*.3)tx+=' ';tx+=it.s;pe=it.x+it.w;}
+            var tr=tx.trim();if(!tr||tr.length<2)return;var tp='text';
+            if(ln[0].y>ph*.88)tp='header';else if(ln[0].y<ph*.07)tp='footer';else if(ln[0].h>15&&tr.length<100)tp='heading';
+            raw.push({type:tp,text:tr,page:pn});});});});});
+    })(p);
+    return chain.then(function(){
+      var mg=[],bf='',bp=1;
+      raw.forEach(function(b){if(b.type==='header'||b.type==='footer'){if(bf.trim())mg.push({type:'paragraph',text:bf.trim(),page:bp});bf='';mg.push(b);return;}
+        if(b.type==='heading'){if(bf.trim())mg.push({type:'paragraph',text:bf.trim(),page:bp});bf='';mg.push({type:'chapter',text:b.text,page:b.page});return;}
+        if(bf.endsWith('-'))bf=bf.slice(0,-1)+b.text;
+        else if(bf&&!/[.!?":;]$/.test(bf))bf+=' '+b.text;
+        else{if(bf.trim())mg.push({type:'paragraph',text:bf.trim(),page:bp});bf=b.text;bp=b.page;}});
+      if(bf.trim())mg.push({type:'paragraph',text:bf.trim(),page:bp});
+      var cleaned=mg.filter(function(b){return b.text.length>3;}).map(function(b){
+        if(b.type!=='paragraph')return b;
+        var t=b.text.replace(/(\w)\s(tion|sion|ment|ness|ing|ous|ive|ful|less|ence|ance|ity)\b/gi,'$1$2')
+          .replace(/\b(in|un|re|pre|dis|mis)\s(\w{3,})/gi,'$1$2').replace(/\s{2,}/g,' ').trim();
+        return{type:b.type,text:t,page:b.page};});
+      return{blocks:cleaned,pages:pgs};});});}
 
-/* ══════════════ BUILT-IN TEXT CLEANUP ══════════════ */
-function autoClean(blocks){
-  const fixes=[
-    /(\w)\s(tion|sion|ment|ness|able|ible|ing|ous|ive|ful|less|ence|ance|ity|ure|ate|ize|ise)\b/gi,
-    /\b(in|un|re|pre|dis|mis|over|under|out)\s(\w{3,})/gi,
-    /\b(\w{2,})\s(ly|er|ed|es|al)\b/gi,
-  ];
-  return blocks.map(b=>{
-    if(b.type!=='paragraph')return b;
-    let t=b.text;
-    fixes.forEach(rx=>{t=t.replace(rx,'$1$2');});
-    t=t.replace(/\s{2,}/g,' ').trim();
-    return{...b,text:t};
+/* ══════ GOOGLE TTS ══════ */
+function callTTS(text){
+  var url='https://texttospeech.googleapis.com/v1/text:synthesize?key='+gKey;
+  return fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({input:{text:text},voice:{languageCode:voiceName.slice(0,5),name:voiceName},audioConfig:{audioEncoding:'MP3',speakingRate:1.0,pitch:0}})})
+  .then(function(r){
+    if(!r.ok)return r.json().then(function(e){throw new Error(e.error?e.error.message:'HTTP '+r.status);});
+    return r.json();})
+  .then(function(d){
+    var bin=atob(d.audioContent),buf=new Uint8Array(bin.length);
+    for(var i=0;i<bin.length;i++)buf[i]=bin.charCodeAt(i);
+    return URL.createObjectURL(new Blob([buf],{type:'audio/mpeg'}));});}
+
+function testKey(){
+  var st=document.getElementById('keyStatus');
+  if(!gKey){st.className='key-status key-err';st.textContent='No key entered';return;}
+  st.className='key-status key-wait';st.textContent='Testing...';
+  callTTS('Hello, VoxReader is working.').then(function(url){
+    st.className='key-status key-ok';st.textContent='✓ Connected! Voice is working.';
+    var a=new Audio(url);a.play().catch(function(){});
+  }).catch(function(e){
+    st.className='key-status key-err';st.textContent='✗ Error: '+e.message;
+  });}
+
+function genChapter(ci,cb){
+  var ch=CH[ci];if(!ch)return Promise.resolve();
+  var paras=[];
+  for(var r=ch.sr;r<=ch.er;r++){var idx=RI[r];if(BK[idx].type==='paragraph')paras.push(idx);}
+  var done=0,chain=Promise.resolve();
+  paras.forEach(function(idx){
+    chain=chain.then(function(){
+      if(audioCache[idx]){done++;if(cb)cb(done,paras.length);return;}
+      return callTTS(BK[idx].text).then(function(url){
+        return new Promise(function(res){var a=new Audio(url);
+          a.addEventListener('loadedmetadata',function(){audioCache[idx]={url:url,dur:a.duration};res();});
+          a.addEventListener('error',function(){audioCache[idx]={url:null,dur:0};res();});});
+      }).catch(function(e){console.error('TTS:',e);audioCache[idx]={url:null,dur:0};})
+      .then(function(){done++;if(cb)cb(done,paras.length);});});});
+  return chain.then(function(){var td=0;for(var r=ch.sr;r<=ch.er;r++){var c=audioCache[RI[r]];if(c)td+=c.dur;}chDurs[ci]=td;});}
+
+/* ══════ COMPUTE ══════ */
+function compute(){
+  RI=[];BK.forEach(function(b,i){if(smartMode){if(b.type==='paragraph'||b.type==='chapter')RI.push(i);}else{if(b.type!=='header'&&b.type!=='footer')RI.push(i);}});
+  CH=[];var c={t:'Start',sr:0,si:RI[0]||0};
+  RI.forEach(function(idx,ri){if(BK[idx].type==='chapter'){if(ri>0){c.er=ri-1;CH.push(c);}c={t:BK[idx].text,sr:ri,si:idx};}});
+  c.er=RI.length-1;CH.push(c);chDurs=CH.map(function(){return 0;});}
+
+function getCurCh(){if(curIdx<0)return 0;for(var i=CH.length-1;i>=0;i--)if(curIdx>=CH[i].si)return i;return 0;}
+function getChOf(idx){for(var i=CH.length-1;i>=0;i--)if(idx>=CH[i].si)return i;return 0;}
+function fmt(s){s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function chElapsed(ci){var ch=CH[ci],s=0,cri=RI.indexOf(curIdx);
+  for(var r=ch.sr;r<=ch.er;r++){if(r<cri){var ac=audioCache[RI[r]];if(ac)s+=ac.dur;}else if(r===cri){s+=(AUD.currentTime||0);break;}}return s;}
+
+/* ══════ PLAYBACK ══════ */
+function buildPL(ci){var ch=CH[ci];playlist=[];
+  for(var r=ch.sr;r<=ch.er;r++){var idx=RI[r];if(BK[idx].type==='paragraph'&&audioCache[idx]&&audioCache[idx].url)playlist.push(idx);}return playlist;}
+
+function playFrom(idx){
+  var ci=getChOf(idx);
+  if(!audioCache[idx]||!audioCache[idx].url){showGen(ci);
+    return genChapter(ci,updGen).then(function(){hideGen();var pl=buildPL(ci);plPos=pl.indexOf(idx);if(plPos<0)plPos=0;playing=true;playSeg(pl[plPos]);
+      if(ci+1<CH.length)genChapter(ci+1).catch(function(){});});}
+  var pl=buildPL(ci);plPos=pl.indexOf(idx);if(plPos<0)plPos=0;playing=true;playSeg(pl[plPos]);return Promise.resolve();}
+
+function playSeg(idx){curIdx=idx;var c=audioCache[idx];if(!c||!c.url){nextSeg();return;}
+  AUD.src=c.url;AUD.playbackRate=spd;AUD.play().catch(function(e){console.log('play:',e);});
+  hlPara(idx);syncPdf(idx);setupMS();updatePlayer();}
+
+function nextSeg(){plPos++;
+  if(plPos<playlist.length)setTimeout(function(){playSeg(playlist[plPos]);},200);
+  else{var ci=getCurCh();if(ci+1<CH.length)setTimeout(function(){playCh(ci+1);},600);else{playing=false;updateBtns();}}}
+
+function playCh(ci){
+  var firstIdx=RI[CH[ci].sr];
+  if(!audioCache[firstIdx]||!audioCache[firstIdx].url){showGen(ci);
+    return genChapter(ci,updGen).then(function(){hideGen();var pl=buildPL(ci);if(!pl.length){playing=false;updateBtns();return;}
+      plPos=0;playlist=pl;playSeg(pl[0]);if(ci+1<CH.length)genChapter(ci+1).catch(function(){});});}
+  var pl=buildPL(ci);if(!pl.length){playing=false;updateBtns();return;}
+  plPos=0;playlist=pl;playSeg(pl[0]);if(ci+1<CH.length)genChapter(ci+1).catch(function(){});}
+
+function stopPlay(){AUD.pause();playing=false;updateBtns();}
+function hlPara(idx){document.querySelectorAll('.bp.act,.bc.act').forEach(function(e){e.classList.remove('act');});
+  var el=document.getElementById('b'+idx);if(el){el.classList.add('act');el.scrollIntoView({behavior:'smooth',block:'center'});}}
+function syncPdf(idx){if(!showPdfSync||!PI.length)return;var pg=BK[idx]?BK[idx].page:null;if(!pg)return;
+  var el=document.getElementById('pdfSync');if(el)el.innerHTML='<img src="'+PI[pg-1]+'"><div style="font-size:11px;color:var(--t2);margin-top:4px">Page '+pg+'</div>';}
+
+function showGen(ci){var el=document.getElementById('genBar');
+  if(!el){el=document.createElement('div');el.id='genBar';el.className='gen-bar';document.getElementById('ct').prepend(el);}
+  el.innerHTML='<div class="gen-info"><span>Generating: '+(CH[ci]?CH[ci].t:'Chapter')+'</span><span id="genPct">0%</span></div><div class="gen-track"><div class="gen-fill" id="genFill"></div></div>';el.style.display='';}
+function updGen(d,t){var el=document.getElementById('genFill');if(el)el.style.width=Math.round(d/t*100)+'%';var p=document.getElementById('genPct');if(p)p.textContent=Math.round(d/t*100)+'%';}
+function hideGen(){var el=document.getElementById('genBar');if(el)el.style.display='none';}
+
+/* ══════ MEDIA SESSION ══════ */
+function setupMS(){if(!('mediaSession' in navigator))return;
+  navigator.mediaSession.metadata=new MediaMetadata({title:CH[getCurCh()]?CH[getCurCh()].t:'VoxReader',artist:'VoxReader',album:document.getElementById('fn').textContent||'Book'});
+  navigator.mediaSession.setActionHandler('play',function(){AUD.play();playing=true;updateBtns();});
+  navigator.mediaSession.setActionHandler('pause',function(){AUD.pause();playing=false;updateBtns();});
+  navigator.mediaSession.setActionHandler('previoustrack',function(){var c=getCurCh();if(c>0)playCh(c-1);});
+  navigator.mediaSession.setActionHandler('nexttrack',function(){var c=getCurCh();if(c+1<CH.length)playCh(c+1);});}
+
+/* ══════ PLAYER UI ══════ */
+function updatePlayer(){var ci=getCurCh(),ce=chElapsed(ci),ct=chDurs[ci]||1,cr=ct-ce;
+  document.getElementById('sEl').textContent=fmt(ce);document.getElementById('sRe').textContent='-'+fmt(cr);
+  document.getElementById('sFl').style.width=Math.min(100,ce/ct*100)+'%';
+  document.getElementById('pCh').textContent=curIdx>=0?'Ch '+(ci+1)+': '+(CH[ci]?CH[ci].t:''):(gKey?'Tap a paragraph':'Add TTS key above');
+  var bE=0,bT=0;chDurs.forEach(function(d,i){bT+=d;if(i<ci)bE+=d;});bE+=ce;var bp=bT?Math.round(bE/bT*100):0;
+  document.getElementById('pBk').textContent=curIdx>=0?bp+'% · '+fmt(bT-bE)+' left':'';
+  document.getElementById('tF').style.width=bp+'%';var pt=document.getElementById('bPt');if(pt)pt.textContent=bp+'%';
+  renderCh();updateBtns();}
+
+function updateBtns(){document.getElementById('pIc').innerHTML=playing?'<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>':'<path d="M8 5v14l11-7z"/>';
+  var a=curIdx>=0;['xRw','xFw','xPC','xNC'].forEach(function(id){document.getElementById(id).disabled=!a;});}
+
+/* scrubber */
+function scrubSeek(e){var trk=document.getElementById('sTk'),rect=trk.getBoundingClientRect();
+  var cx=e.clientX||(e.touches?e.touches[0].clientX:0);var pct=Math.max(0,Math.min(1,(cx-rect.left)/rect.width));
+  var ci=getCurCh(),tgt=pct*(chDurs[ci]||1),acc=0;
+  for(var ri=CH[ci].sr;ri<=CH[ci].er;ri++){var idx=RI[ri],c=audioCache[idx];if(!c)continue;
+    if(acc+c.dur>=tgt){playlist=buildPL(ci);plPos=playlist.indexOf(idx);curIdx=idx;
+      AUD.src=c.url;AUD.currentTime=tgt-acc;AUD.playbackRate=spd;AUD.play().catch(function(){});playing=true;hlPara(idx);updatePlayer();return;}
+    acc+=c.dur;}}
+
+/* ══════ RENDER ══════ */
+function renderContent(){compute();var a=document.getElementById('ct');
+  var tw=0;RI.forEach(function(i){tw+=BK[i].text.split(/\s+/).length;});
+  var h='<div id="pdfSync" class="pdf-sync" style="display:'+(showPdfSync?'':'none')+'"></div>';
+  // key box if no key
+  if(!gKey){
+    h+='<div class="key-box"><h3>🔑 Google Cloud TTS Setup</h3>';
+    h+='<div class="key-row"><input class="key-input" id="keyInput" placeholder="Paste your API key here (AIza...)"><button class="key-btn key-save" onclick="saveKeyFromInput()">Save</button><button class="key-btn key-test" onclick="testKey()">Test</button></div>';
+    h+='<div class="key-status" id="keyStatus"></div>';
+    h+='<div class="key-hint">Get a free key: <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Google Cloud Console</a> → Create Credentials → API Key<br>Free tier: 4M chars/month (Standard), 1M chars/month (Neural2)</div></div>';
+  } else {
+    h+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;padding:6px 10px;border-radius:8px;background:var(--acl);font-size:11px">';
+    h+='<span style="color:#5cb85c">✓ TTS key active</span><span style="color:var(--t2)">'+voiceName+'</span>';
+    h+='<button style="margin-left:auto;background:none;border:1px solid var(--bd);border-radius:6px;padding:2px 8px;color:var(--t2);cursor:pointer;font-size:10px;font-family:var(--fu)" onclick="clearKey()">Change key</button></div>';
+  }
+  h+='<div style="display:flex;justify-content:space-between;padding:8px 11px;border-radius:9px;background:var(--acl);border:1px solid var(--bd);font-size:12px;color:var(--t2);margin-bottom:16px">';
+  h+='<span>~'+Math.ceil(tw/150)+' min · '+CH.length+' chapters</span><span style="font-weight:600;color:var(--ac)" id="bPt">0%</span></div>';
+  BK.forEach(function(b,i){
+    var sk=smartMode&&(b.type==='header'||b.type==='footer');
+    if(sk){h+='<div class="bsk" id="b'+i+'">⚡ '+b.text.slice(0,45)+'</div>';return;}
+    if(b.type==='chapter'){h+='<div class="bc" id="b'+i+'" onclick="window._tap('+i+')"><h2>'+b.text+'</h2></div>';return;}
+    var bc=bookmarks.has(i)?' has':'';
+    h+='<div class="bp" id="b'+i+'" onclick="window._tap('+i+')"><p>'+b.text+'</p>';
+    h+='<button class="bmb'+bc+'" onclick="event.stopPropagation();window._bm('+i+')">';
+    h+='<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg></button></div>';
   });
-}
+  a.innerHTML=h;renderCh();updatePlayer();}
 
-/* ══════════════ AI CLEANUP ══════════════ */
-async function aiClean(bks,key){
-  if(!key)return null;
-  const rd=bks.filter(b=>b.type==='paragraph'||b.type==='chapter');
-  const s=rd.map((b,i)=>`[${i}|${b.type}] ${b.text}`).join('\n').slice(0,5000);
-  try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
-    headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
-      messages:[{role:'user',content:`Fix broken/split words in this PDF text. Return ONLY JSON:\n{"fixes":[{"idx":0,"fixed":"corrected text"}],"chapters":[0,5]}\nfixes=only blocks with broken words. chapters=heading indices.\n\n${s}`}]})});
-    const d=await r.json(),tx=(d.content||[]).map(c=>c.text||'').join('');
-    return JSON.parse(tx.replace(/```json|```/g,'').trim());}catch(e){console.log('AI:',e);return null;}}
+function renderCh(){var l=document.getElementById('cL');if(!l)return;var ci=getCurCh(),h='';
+  CH.forEach(function(ch,i){var d=chDurs[i]||0,p=d?Math.round(chElapsed(i)/d*100):0;
+    h+='<button class="chi'+(i===ci?' cur':'')+'" onclick="window._jc('+i+')">';
+    h+='<div style="display:flex;justify-content:space-between;margin-bottom:4px"><span class="nm">'+ch.t+'</span><span style="font-size:10px;color:var(--t2)">'+(d?fmt(d):'—')+'</span></div>';
+    h+='<div style="display:flex;align-items:center;gap:6px"><div class="cbar"><div class="cfill" style="width:'+p+'%"></div></div><span class="cpct">'+p+'%</span>';
+    if(i===ci&&playing)h+='<span class="cdot"></span>';h+='</div></button>';});
+  l.innerHTML=h;}
 
-/* ══════════════ COMPUTE ══════════════ */
-function comp(){
-  RI=BK.map((b,i)=>{if(sm)return(b.type==='paragraph'||b.type==='chapter')?i:-1;return b.type!=='header'&&b.type!=='footer'?i:-1;}).filter(i=>i!==-1);
-  CH=[];let c={t:'Start',sr:0,si:RI[0]||0};
-  RI.forEach((idx,ri)=>{if(BK[idx].type==='chapter'){if(ri>0)CH.push({...c,er:ri-1});c={t:BK[idx].text,sr:ri,si:idx};}});
-  c.er=RI.length-1;CH.push(c);}
+function renderBm(){document.getElementById('bN').textContent=bookmarks.size;document.getElementById('bDot').style.display=bookmarks.size?'':'none';
+  var l=document.getElementById('bL');
+  if(!bookmarks.size){l.innerHTML='<div style="font-size:12px;color:var(--t2)">Tap bookmark icon on any paragraph</div>';return;}
+  var h='';Array.from(bookmarks).sort(function(a,b){return a-b;}).forEach(function(i){
+    h+='<button class="chi" onclick="window._tap('+i+');window._cp()">★ '+(BK[i]?BK[i].text.slice(0,65):'')+'…</button>';});
+  l.innerHTML=h;}
 
-function wc(ri){return BK[RI[ri]]?.text.split(/\s+/).length||0;}
-function chSec(ci){let s=0;for(let r=CH[ci].sr;r<=CH[ci].er;r++)s+=wc(r)/2.5;return s;}
-function chElapsed(ci){const ri=RI.indexOf(cur);if(ri<0)return 0;let s=0;for(let r=CH[ci].sr;r<=Math.min(ri,CH[ci].er);r++)s+=wc(r)/2.5;return s;}
-function chPct(ci){const t=chSec(ci);return t?Math.round(chElapsed(ci)/t*100):0;}
-function bookSec(){let s=0;CH.forEach((_,i)=>s+=chSec(i));return s;}
-function bookElapsed(){let s=0;const ci=curCI();for(let i=0;i<ci;i++)s+=chSec(i);s+=chElapsed(ci);return s;}
-function bookPct(){const t=bookSec();return t?Math.round(bookElapsed()/t*100):0;}
-function curCI(){if(cur<0)return 0;for(let i=CH.length-1;i>=0;i--)if(cur>=CH[i].si)return i;return 0;}
-function fT(s){s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function renderSettings(){
+  var voiceOpts=VOICES.map(function(v){return'<option value="'+v+'"'+(v===voiceName?' selected':'')+'>'+v+'</option>';}).join('');
+  var thm=document.body.dataset.th||'dark';
+  var h='';
+  h+='<div class="sr"><span class="sl">KEY</span><input class="key-input" style="flex:1;padding:4px 8px;font-size:11px" value="'+gKey+'" oninput="window._uk(this.value)" placeholder="Google TTS API key"><button class="key-btn key-test" style="padding:4px 10px;font-size:10px" onclick="testKey()">Test</button></div>';
+  h+='<div class="sr"><span class="sl">VOICE</span><select onchange="window._uv(this.value)" style="flex:1;max-width:200px">'+voiceOpts+'</select></div>';
+  h+='<div class="sr"><span class="sl">THEME</span>';
+  ['dark','light','sepia'].forEach(function(t){h+='<button class="pill'+(t===thm?' on':'')+'" onclick="window._st(\''+t+'\')">'+t+'</button>';});h+='</div>';
+  h+='<div class="sr"><span class="sl">SIZE</span><button class="pill" onclick="window._cfs(-1)">−</button><span style="min-width:22px;text-align:center;font-size:13px" id="fV">'+fontSize+'</span><button class="pill" onclick="window._cfs(1)">+</button></div>';
+  h+='<div class="sr"><span class="sl">SMART</span><button class="pill'+(smartMode?' on':'')+'" onclick="window._tsm()">'+(smartMode?'ON — Skip junk':'OFF — All')+'</button></div>';
+  h+='<div class="sr"><span class="sl">PDF</span><button class="pill'+(showPdfSync?' on':'')+'" onclick="window._tps()">'+(showPdfSync?'ON — Show page':'OFF')+'</button></div>';
+  document.getElementById('setBox').innerHTML=h;}
 
-/* ══════════════ RENDER ══════════════ */
-function render(){comp();const a=document.getElementById('ct');
-  const tw=RI.reduce((a,i)=>a+BK[i].text.split(/\s+/).length,0);
-  let h=`<div class="sts"><span>~${Math.ceil(tw/150)} min · ${RI.filter(i=>BK[i].type==='paragraph').length} para · ${CH.length} ch</span><span style="font-weight:600;color:var(--ac)" id="bPt">0%</span></div>`;
-  BK.forEach((b,i)=>{
-    const sk=sm&&(b.type==='header'||b.type==='footer');
-    if(sk){h+=`<div class="bsk" id="b${i}">⚡ Skipped: ${b.text.slice(0,45)}${b.text.length>45?'…':''}</div>`;return;}
-    if(b.type==='chapter'){h+=`<div class="bc" id="b${i}" onclick="T(${i})"><h2>${b.text}</h2></div>`;return;}
-    h+=`<div class="bp" id="b${i}" onclick="T(${i})"><p>${b.text}</p><button class="bmb${bm.has(i)?' has':''}" onclick="event.stopPropagation();TB(${i})"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg></button></div>`;});
-  a.innerHTML=h;rCh();uP();}
+function loadDemo(){PI=[];audioCache={};document.getElementById('bPg').style.display='none';document.getElementById('fn').textContent='Demo Book';
+  BK=[{type:'chapter',text:'Chapter 1: The Beginning'},{type:'paragraph',text:'In the quiet hours before dawn, when the world still held its breath between darkness and light, Marcus found himself standing at the edge of something vast and unknowable.'},{type:'paragraph',text:'He had always been a reader — not just of books, but of silences, of the spaces between words where meaning truly lived. His grandmother had taught him that.'},{type:'header',text:'Page 12 — Draft Copy'},{type:'paragraph',text:'The morning light crept across the rooftops like spilled honey, transforming the grey concrete into something almost beautiful.'},{type:'paragraph',text:'He thought about the letter in his pocket. Three pages of careful handwriting, each word chosen with the precision of a surgeon.'},{type:'footer',text:'© 2024 All Rights Reserved'},{type:'paragraph',text:'There is a particular kind of courage required to sit with grief without trying to fix it. Marcus had learned this the hard way.'},{type:'chapter',text:'Chapter 2: The Library'},{type:'paragraph',text:'The old library on Adeniyi Jones Avenue had survived three floods, two attempted demolitions, and the slow march of digital transformation.'},{type:'paragraph',text:'Marcus pushed open the heavy wooden door and stepped inside. The air was different here — cooler, quieter, thick with wisdom.'},{type:'paragraph',text:'"You\'re back," she said, as if he had only stepped out for a moment. "I kept your books on hold."'},{type:'paragraph',text:'Mrs. Adeyemi brought him tea without being asked. It was the small kindnesses that undid him.'},{type:'chapter',text:'Chapter 3: Everything Changed'},{type:'paragraph',text:'The letter was still in his pocket. He could feel its edges pressing against his thigh, a constant reminder.'},{type:'paragraph',text:'His mother had written about forgiveness — not the grand theatrical kind, but the quiet daily practice of releasing what you cannot change.'},{type:'paragraph',text:'When he finished reading, Marcus folded the letter. It was no longer a burden — it was a compass.'}];
+  renderContent();}
 
-function rCh(){const l=document.getElementById('cL');if(!CH.length)return;
-  const ci=curCI();
-  l.innerHTML=CH.map((ch,i)=>{const p=chPct(i),s=chSec(i);
-    return`<button class="chi${i===ci?' cur':''}" onclick="JC(${i})"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span class="nm">${ch.t}</span><span class="dr">${fT(s)}</span></div><div style="display:flex;align-items:center;gap:6px"><div class="cbar"><div class="cfill" style="width:${p}%"></div></div><span class="cpct">${p}%</span>${i===ci&&on?'<span class="cdot"></span>':''}</div></button>`;}).join('');}
+/* ══════ PANEL TOGGLES ══════ */
+function closePanel(){document.querySelectorAll('.pnl').forEach(function(p){p.classList.remove('open');});
+  ['bSetBtn','bChBtn','bBmBtn','bPg'].forEach(function(id){var b=document.getElementById(id);if(b)b.classList.remove('on');});}
+function togglePanel(pnlId,btnId){var pnl=document.getElementById(pnlId),open=pnl.classList.contains('open');closePanel();
+  if(!open){pnl.classList.add('open');document.getElementById(btnId).classList.add('on');
+    if(pnlId==='pnlBm')renderBm();if(pnlId==='pnlSet')renderSettings();}}
 
-function rBm(){document.getElementById('bN').textContent=bm.size;document.getElementById('bD').style.display=bm.size?'':'none';
-  const l=document.getElementById('bL');
-  l.innerHTML=bm.size?[...bm].sort((a,b)=>a-b).map(i=>`<button class="chi" onclick="T(${i});cP()">★ ${BK[i]?.text.slice(0,65)}…</button>`).join(''):'<div style="font-size:12px;color:var(--t2)">Tap bookmark icon on any paragraph</div>';}
+/* ══════ GLOBAL HANDLERS ══════ */
+window._tap=function(i){if(!gKey){alert('Please add your Google Cloud TTS API key first.\n\nPaste it in the box at the top of the page, then click Save.');return;}stopPlay();playFrom(i);};
+window._bm=function(i){if(bookmarks.has(i))bookmarks.delete(i);else bookmarks.add(i);
+  var btn=document.querySelector('#b'+i+' .bmb');if(btn)btn.classList.toggle('has',bookmarks.has(i));
+  document.getElementById('bDot').style.display=bookmarks.size?'':'none';trySave('vox_bm',JSON.stringify(Array.from(bookmarks)));renderBm();};
+window._jc=function(ci){closePanel();playCh(ci);};
+window._cp=closePanel;
+window._uk=function(v){gKey=v;trySave('vox_key',v);};
+window._uv=function(v){voiceName=v;trySave('vox_voice',v);};
+window._st=function(t){document.body.dataset.th=t;renderSettings();};
+window._cfs=function(d){fontSize=Math.max(14,Math.min(28,fontSize+d));document.documentElement.style.setProperty('--fs',fontSize+'px');renderSettings();};
+window._tsm=function(){smartMode=!smartMode;if(BK.length)renderContent();else renderSettings();};
+window._tps=function(){showPdfSync=!showPdfSync;var el=document.getElementById('pdfSync');if(el)el.style.display=showPdfSync?'':'none';renderSettings();};
 
-/* ══════════════════════════════════════════════════════
-   MODIFIED: bSt() — settings panel
-   ONLY CHANGE: voice row now shows all voices grouped
-   into Recommended / Other, adds a Preview button, and
-   shows a background-audio status badge.
-   Everything else in this function is identical.
-══════════════════════════════════════════════════════ */
-function bSt(){
-  // Check background audio support for status badge
-  const bgSupport = !!(window.AudioContext || window.webkitAudioContext);
-  const msSupport = !!('mediaSession' in navigator);
-  const bgLabel = (bgSupport && msSupport)
-    ? '<span class="bgst ok">✓ Background play supported</span>'
-    : '<span class="bgst no">⚠ Background play limited</span>';
+window.saveKeyFromInput=function(){var inp=document.getElementById('keyInput');if(!inp)return;
+  gKey=inp.value.trim();trySave('vox_key',gKey);
+  var st=document.getElementById('keyStatus');
+  if(gKey){st.className='key-status key-ok';st.textContent='✓ Key saved! Click Test to verify, or tap a paragraph to start.';if(BK.length)renderContent();}
+  else{st.className='key-status key-err';st.textContent='Please enter a key';}};
+window.testKey=function(){testKey();};
+window.clearKey=function(){gKey='';trySave('vox_key','');renderContent();};
+window.loadDemo=loadDemo;
 
-  document.getElementById('sB').innerHTML=`
-  <div class="sr"><span class="sl">THEME</span>${['dark','light','sepia'].map(t=>`<button class="pill${t===th?' on':''}" onclick="sTh('${t}')">${t}</button>`).join('')}</div>
-  <div class="sr"><span class="sl">FONT</span><select onchange="sF(this.value)">${['Literata','Lora','Georgia'].map(f=>`<option${f===ff?' selected':''}>${f}</option>`).join('')}</select></div>
-  <div class="sr"><span class="sl">SIZE</span><button class="pill" onclick="cFs(-1)">−</button><span style="min-width:22px;text-align:center;font-size:13px" id="fV">${fs}</span><button class="pill" onclick="cFs(1)">+</button><input type="range" min="14" max="28" value="${fs}" oninput="sFs(+this.value)" style="flex:1"></div>
-  <div class="sr" style="align-items:flex-start;flex-direction:column;gap:6px">
-    <div style="display:flex;align-items:center;gap:6px;width:100%">
-      <span class="sl">VOICE</span>
-      <select id="vS" onchange="SV=VV.find(v=>v.name===this.value.replace(/ ★$/,''))" style="flex:1;max-width:200px"></select>
-      <button class="vprev" onclick="prvVoice()">▶ Preview</button>
-    </div>
-    <div style="font-size:10px;color:var(--t2);padding-left:48px">
-      Install better voices: <strong style="color:var(--t)">iPhone</strong> → Settings → Accessibility → Spoken Content → Voices &nbsp;|&nbsp;
-      <strong style="color:var(--t)">Android</strong> → Settings → Accessibility → TTS → Install voice data
-    </div>
-  </div>
-  <div class="sr"><span class="sl">SPEED</span>${SP.map(s=>`<button class="pill${s===spd?' on':''}" onclick="sSp(${s})">${s}x</button>`).join('')}</div>
-  <div class="sr"><span class="sl">PAUSE</span><button class="pill${np?' on':''}" onclick="np=!np;bSt()">${np?'ON — Natural breaks':'OFF — Continuous'}</button></div>
-  <div class="sr"><span class="sl">SMART</span><button class="pill${sm?' on':''}" onclick="sm=!sm;if(BK.length)render();bSt()">${sm?'ON — Skip junk':'OFF — Read all'}</button></div>
-  <div class="sr"><span class="sl">BG AUDIO</span>${bgLabel}<span style="font-size:10px;color:var(--t2);margin-left:4px">Starts automatically on play</span></div>
-  <div class="sr"><span class="sl">AI KEY</span><input type="text" placeholder="Anthropic API key (optional)" value="${apiKey}" onchange="apiKey=this.value" style="flex:1"></div>
-  <div style="font-size:10px;color:var(--t2);margin-top:2px;padding-left:48px">Built-in cleanup runs automatically. AI cleanup needs a Claude API key for advanced fixes.</div>`;
-  fVo();
-}
+/* ══════ INIT ══════ */
+document.addEventListener('DOMContentLoaded',function(){
+  AUD=document.getElementById('aud');
+  AUD.addEventListener('timeupdate',function(){if(playing)updatePlayer();});
+  AUD.addEventListener('ended',function(){nextSeg();});
 
-/* ══════════════ TTS ══════════════ */
-/* ══════════════════════════════════════════════════════
-   MODIFIED: lV() and fVo()
-   ONLY CHANGE: fVo now groups voices into Recommended
-   (neural/enhanced/premium quality) and All Others,
-   so the best voices float to the top of the list.
-   lV() logic is identical — only fVo changed.
-══════════════════════════════════════════════════════ */
-function lV(){
-  const ld=()=>{
-    VV=speechSynthesis.getVoices();
-    if(!VV.length)return;
-    const en=VV.filter(v=>v.lang.startsWith('en'));
-    SV=en.find(v=>/samantha|google.*female|zira|karen|daniel/i.test(v.name))||en[0]||VV[0];
-    fVo();
-  };
-  ld();
-  speechSynthesis.addEventListener('voiceschanged',ld);
-}
+  // load saved
+  var sk=tryLoad('vox_key');if(sk)gKey=sk;
+  var sv=tryLoad('vox_voice');if(sv)voiceName=sv;
+  var sb=tryLoad('vox_bm');if(sb)try{bookmarks=new Set(JSON.parse(sb));}catch(e){}
 
-function fVo(){
-  const s=document.getElementById('vS');
-  if(!s)return;
+  // scrubber
+  var sTk=document.getElementById('sTk');
+  sTk.addEventListener('mousedown',function(e){scDrag=true;scrubSeek(e);});
+  sTk.addEventListener('touchstart',function(e){scDrag=true;scrubSeek(e);},{passive:true});
+  document.addEventListener('mousemove',function(e){if(scDrag)scrubSeek(e);});
+  document.addEventListener('touchmove',function(e){if(scDrag)scrubSeek(e);},{passive:true});
+  document.addEventListener('mouseup',function(){scDrag=false;});
+  document.addEventListener('touchend',function(){scDrag=false;});
 
-  // Score a voice — higher = better quality
-  const score=v=>{
-    const n=v.name.toLowerCase();
-    let sc=0;
-    if(n.includes('neural'))    sc+=12;
-    if(n.includes('natural'))   sc+=12;
-    if(n.includes('enhanced'))  sc+=9;
-    if(n.includes('premium'))   sc+=9;
-    if(n.includes('google'))    sc+=7;
-    if(n.includes('microsoft')) sc+=6;
-    if(/samantha|karen|daniel|moira|fiona|aria|jenny|guy/.test(n)) sc+=5;
-    if(v.lang==='en-US')        sc+=3;
-    else if(v.lang==='en-GB')   sc+=2;
-    else if(v.lang.startsWith('en')) sc+=1;
-    return sc;
-  };
+  // player buttons
+  document.getElementById('xPl').addEventListener('click',function(){
+    if(playing)stopPlay();
+    else{if(!gKey){alert('Add your TTS key first (paste in the box at the top)');return;}playFrom(curIdx>=0?curIdx:RI[0]);}});
+  document.getElementById('xFw').addEventListener('click',function(){AUD.currentTime=Math.min(AUD.duration||0,AUD.currentTime+10);});
+  document.getElementById('xRw').addEventListener('click',function(){AUD.currentTime=Math.max(0,AUD.currentTime-10);});
+  document.getElementById('xNC').addEventListener('click',function(){var c=getCurCh();if(c+1<CH.length)playCh(c+1);});
+  document.getElementById('xPC').addEventListener('click',function(){var c=getCurCh();if(c>0)playCh(c-1);});
+  document.getElementById('xSp').addEventListener('click',function(){var i=SP.indexOf(spd);spd=SP[(i+1)%SP.length];AUD.playbackRate=spd;document.getElementById('xSp').textContent=spd+'x';});
 
-  const en    = VV.filter(v=>v.lang.startsWith('en')).sort((a,b)=>score(b)-score(a));
-  const other = VV.filter(v=>!v.lang.startsWith('en')).sort((a,b)=>a.name.localeCompare(b.name));
+  // panels
+  document.getElementById('bSetBtn').addEventListener('click',function(){togglePanel('pnlSet','bSetBtn');});
+  document.getElementById('bChBtn').addEventListener('click',function(){togglePanel('pnlCh','bChBtn');});
+  document.getElementById('bBmBtn').addEventListener('click',function(){togglePanel('pnlBm','bBmBtn');});
+  document.getElementById('bPg').addEventListener('click',function(){showPdfSync=!showPdfSync;document.getElementById('bPg').classList.toggle('on',showPdfSync);
+    var el=document.getElementById('pdfSync');if(el)el.style.display=showPdfSync?'':'none';});
 
-  // Star mark recommended voices (score ≥ 6)
-  const opt=v=>{
-    const starred = score(v)>=6 ? ' ★' : '';
-    const sel     = v===SV ? ' selected' : '';
-    return `<option${sel}>${v.name}${starred}</option>`;
-  };
+  // file
+  document.getElementById('fIn').addEventListener('change',function(e){
+    var f=e.target.files[0];if(!f)return;document.getElementById('fn').textContent=f.name;stopPlay();curIdx=-1;audioCache={};
+    document.getElementById('ct').innerHTML='<div style="text-align:center;padding:50px;color:var(--t2)"><div class="spinner"></div><div style="font-size:14px">Reading PDF…</div></div>';
+    exPDF(f).then(function(r){PI=r.pages;BK=r.blocks;document.getElementById('bPg').style.display=PI.length?'':'none';renderContent();})
+    .catch(function(err){console.error(err);document.getElementById('ct').innerHTML='<div style="text-align:center;padding:50px"><div style="font-size:16px;color:var(--ac);margin-bottom:8px">Could not read PDF</div><div style="font-size:13px;color:var(--t2)">Error: '+err.message+'</div></div>';});});
 
-  let html='';
-  if(en.length){
-    const rec=en.filter(v=>score(v)>=6);
-    const rest=en.filter(v=>score(v)<6);
-    if(rec.length)  html+=`<optgroup label="★ Recommended English">${rec.map(opt).join('')}</optgroup>`;
-    if(rest.length) html+=`<optgroup label="Other English">${rest.map(opt).join('')}</optgroup>`;
-  }
-  if(other.length){
-    html+=`<optgroup label="Other languages">${other.map(v=>{
-      const sel=v===SV?' selected':'';
-      return`<option${sel}>${v.name} (${v.lang})</option>`;
-    }).join('')}</optgroup>`;
-  }
-  if(!html) html='<option>No voices found — reload page</option>';
-  s.innerHTML=html;
-}
-
-function pp(t){if(!np)return t;
-  return t.replace(/\.\s+/g,'. ... ').replace(/\?\s+/g,'? ... ').replace(/!\s+/g,'! ... ')
-    .replace(/,\s+/g,', .. ').replace(/;\s+/g,'; .. ').replace(/:\s+/g,': .. ').replace(/—/g,' — .. ');}
-
-/* ══════════════════════════════════════════════════════
-   MODIFIED: spk()
-   ONLY ADDITIONS (2 lines inside the function):
-     1. startBgAudio()  — launches silent audio keepalive
-     2. updateMediaSession(b.text)  — updates lock screen
-   Everything else is identical to the original.
-══════════════════════════════════════════════════════ */
-function spk(idx){
-  speechSynthesis.cancel();
-  const b=BK[idx];
-  if(!b){stp();return;}
-
-  // ── ADDED: keep browser audio session alive ──
-  startBgAudio();
-
-  const u=new SpeechSynthesisUtterance(pp(b.text));
-  u.rate=spd;u.pitch=1.05;if(SV)u.voice=SV;
-  u.onend=()=>{
-    const r=RI.indexOf(idx),n=RI[r+1];
-    const ci=curCI(),nci=n!==undefined?(()=>{for(let i=CH.length-1;i>=0;i--)if(n>=CH[i].si)return i;return 0;})():-1;
-    if(n!==undefined){
-      const delay=nci!==ci?800:380;
-      setTimeout(()=>{sA(n);spk(n);},delay);
-    }else stp();
-  };
-  sA(idx);
-
-  // ── ADDED: tell OS this is now playing (lock screen) ──
-  updateMediaSession(b.text.slice(0,60));
-
-  speechSynthesis.speak(u);
-}
-
-function sA(idx){
-  if(cur>=0){const o=document.getElementById('b'+cur);if(o)o.classList.remove('act');}
-  cur=idx;
-  const e=document.getElementById('b'+idx);
-  if(e){e.classList.add('act');e.scrollIntoView({behavior:'smooth',block:'center'});}
-  uP();
-}
-
-/* ══════════════════════════════════════════════════════
-   MODIFIED: strt() and stp()
-   strt: no change to logic — startBgAudio() is called
-         inside spk() so nothing needed here.
-   stp: ADDED pauseMediaSession() to update lock screen.
-══════════════════════════════════════════════════════ */
-function strt(idx){on=true;uBt();spk(idx??RI[0]??0);}
-function stp(){
-  speechSynthesis.cancel();
-  on=false;
-  uBt();
-  // ── ADDED: update lock screen state ──
-  pauseMediaSession();
-}
-
-window.T=i=>{if(on){speechSynthesis.cancel();spk(i);}else strt(i);};
-window.JC=ci=>{const ch=CH[ci];if(!ch)return;cP();const idx=RI[ch.sr];if(idx!==undefined){if(on){speechSynthesis.cancel();spk(idx);}else strt(idx);}};
-
-function sk30(d){const ri=RI.indexOf(cur);if(ri<0)return;
-  const ci=curCI();let acc=0,target=chElapsed(ci)+d*30;
-  for(let r2=CH[ci].sr;r2<=CH[ci].er;r2++){acc+=wc(r2)/2.5;
-    if(acc>=target||r2===CH[ci].er){const idx=RI[r2];if(on){speechSynthesis.cancel();spk(idx);}else strt(idx);return;}}}
-
-/* ══════════════ PLAYER UPDATE ══════════════ */
-function uP(){
-  const ci=curCI(),ct=chSec(ci),ce=chElapsed(ci),cr=ct-ce;
-  const cpct=ct?Math.min(100,ce/ct*100):0;
-  document.getElementById('sEl').textContent=fT(ce);
-  document.getElementById('sRe').textContent='-'+fT(cr);
-  document.getElementById('sFl').style.width=cpct+'%';
-  document.getElementById('pCh').textContent=cur>=0?`Ch ${ci+1}: ${CH[ci]?.t||''}`:'Tap a paragraph to begin';
-  const bp=bookPct();
-  document.getElementById('pBk').textContent=cur>=0?`Book: ${bp}% · ${fT(bookSec()-bookElapsed())} left`:'';
-  document.getElementById('tF').style.width=bp+'%';
-  const pt=document.getElementById('bPt');if(pt)pt.textContent=bp+'%';
-  rCh();uBt();}
-
-function uBt(){document.getElementById('pIc').innerHTML=on?'<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>':'<path d="M8 5v14l11-7z"/>';
-  const a=cur>=0&&on;['xRw','xFw','xPC','xNC'].forEach(id=>document.getElementById(id).disabled=!a);}
-
-const sTk=document.getElementById('sTk');let scD=false;
-function scSk(e){const r=sTk.getBoundingClientRect(),p=Math.max(0,Math.min(1,((e.clientX||e.touches?.[0]?.clientX||0)-r.left)/r.width));
-  const ci=curCI(),ct=chSec(ci),tgt=p*ct;
-  let acc=0;for(let r2=CH[ci].sr;r2<=CH[ci].er;r2++){acc+=wc(r2)/2.5;
-    if(acc>=tgt||r2===CH[ci].er){const idx=RI[r2];if(on){speechSynthesis.cancel();spk(idx);}else strt(idx);return;}}}
-sTk.addEventListener('mousedown',e=>{scD=true;scSk(e);});
-sTk.addEventListener('touchstart',e=>{scD=true;scSk(e);},{passive:true});
-document.addEventListener('mousemove',e=>{if(scD)scSk(e);});
-document.addEventListener('touchmove',e=>{if(scD)scSk(e);},{passive:true});
-document.addEventListener('mouseup',()=>scD=false);
-document.addEventListener('touchend',()=>scD=false);
-
-document.getElementById('xPl').onclick=()=>{if(on)stp();else strt(cur>=0?cur:RI[0]);};
-document.getElementById('xFw').onclick=()=>sk30(1);
-document.getElementById('xRw').onclick=()=>sk30(-1);
-document.getElementById('xNC').onclick=()=>{const c=curCI();if(c+1<CH.length)JC(c+1);};
-document.getElementById('xPC').onclick=()=>{const c=curCI();if(c>0)JC(c-1);};
-document.getElementById('xSp').onclick=()=>{const i=SP.indexOf(spd);spd=SP[(i+1)%SP.length];document.getElementById('xSp').textContent=spd+'x';bSt();};
-
-window.TB=i=>{if(bm.has(i))bm.delete(i);else bm.add(i);const b=document.getElementById('b'+i)?.querySelector('.bmb');if(b)b.classList.toggle('has',bm.has(i));document.getElementById('bD').style.display=bm.size?'':'none';rBm();};
-
-/* panels */
-function cP(){document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('open'));['bS','bC','bB','bV'].forEach(id=>{const b=document.getElementById(id);if(b)b.classList.remove('on');});document.getElementById('ct').style.display='';document.getElementById('pP').classList.remove('open');}
-window.cP=cP;
-function tgP(p,b){const el=document.getElementById(p),o=el.classList.contains('open');cP();if(!o){el.classList.add('open');document.getElementById(b).classList.add('on');if(p==='pB')rBm();if(p==='pS')bSt();}}
-document.getElementById('bS').onclick=()=>tgP('pS','bS');
-document.getElementById('bC').onclick=()=>tgP('pC','bC');
-document.getElementById('bB').onclick=()=>tgP('pB','bB');
-document.getElementById('bV').onclick=()=>{const p=document.getElementById('pP'),o=p.classList.contains('open');cP();if(!o){p.classList.add('open');document.getElementById('bV').classList.add('on');document.getElementById('ct').style.display='none';}};
-
-window.sTh=t=>{th=t;document.body.dataset.th=t;bSt();};
-window.sF=f=>{ff=f;document.documentElement.style.setProperty('--fb',`'${f}',serif`);};
-window.cFs=d=>{fs=Math.max(14,Math.min(28,fs+d));sFs(fs);};
-window.sFs=v=>{fs=v;document.documentElement.style.setProperty('--fs',v+'px');const e=document.getElementById('fV');if(e)e.textContent=v;};
-window.sSp=s=>{spd=s;document.getElementById('xSp').textContent=s+'x';bSt();};
-
-/* ══════════════ UPLOAD ══════════════ */
-document.getElementById('fIn').addEventListener('change',async e=>{
-  const f=e.target.files[0];if(!f)return;document.getElementById('fn').textContent=f.name;stp();cur=-1;
-  document.getElementById('ct').innerHTML='<div style="text-align:center;padding:50px;color:var(--t2)"><div class="spinner"></div><div style="font-size:14px">Reading PDF…</div></div>';
-  document.getElementById('aiB').innerHTML='';
-  try{
-    const{blocks:raw,pages}=await exPDF(f);PI=pages;
-    document.getElementById('bV').style.display=pages.length?'':'none';
-    document.getElementById('pPg').innerHTML=pages.map((s,i)=>`<img src="${s}" style="width:100%;max-width:600px;border-radius:7px;box-shadow:0 2px 12px var(--sh);border:1px solid var(--bd)">`).join('');
-    BK=autoClean(raw);render();
-    document.getElementById('aiB').innerHTML='<span class="ai-s" style="color:#5cb85c">✓ Text cleaned</span>';
-    if(apiKey){
-      document.getElementById('aiB').innerHTML='<span class="ai-s" style="color:var(--ac);animation:pls 1.5s infinite">✦ AI refining…</span>';
-      const r=await aiClean(raw,apiKey);
-      if(r){const fx=[...BK],rd=BK.filter(b=>b.type==='paragraph'||b.type==='chapter');
-        if(r.fixes)for(const f of r.fixes){const t=rd[f.idx];if(t){const ri=BK.indexOf(t);if(ri>=0)fx[ri]={...fx[ri],text:f.fixed};}}
-        if(r.chapters)for(const ci of r.chapters){const t=rd[ci];if(t){const ri=BK.indexOf(t);if(ri>=0)fx[ri]={...fx[ri],type:'chapter'};}}
-        BK=fx;render();}
-      document.getElementById('aiB').innerHTML='<span class="ai-s" style="color:#5cb85c">✓ AI cleaned</span>';}
-  }catch(err){console.error(err);document.getElementById('ct').innerHTML='<div class="empty"><div class="et" style="color:var(--ac)">Could not read PDF</div><div class="es">May be scanned or encrypted.</div><label class="bo">Try Another<input type="file" accept=".pdf" onchange="document.getElementById(\'fIn\').files=this.files;document.getElementById(\'fIn\').dispatchEvent(new Event(\'change\'))"></label></div>';}});
-
-/* demo */
-window.loadDemo=()=>{PI=[];document.getElementById('bV').style.display='none';document.getElementById('fn').textContent='Demo Book';
-  BK=[{type:'chapter',text:'Chapter 1: The Beginning of Everything'},{type:'paragraph',text:'In the quiet hours before dawn, when the world still held its breath between darkness and light, Marcus found himself standing at the edge of something vast and unknowable. The city below him was a constellation of amber streetlights and blue-white windows.'},{type:'paragraph',text:'He had always been a reader — not just of books, but of silences, of the spaces between words where meaning truly lived. His grandmother had taught him that. She would sit in her worn leather chair, a book open on her lap, and say nothing for hours.'},{type:'header',text:'Page 12 — Draft Copy'},{type:'paragraph',text:'The morning light crept across the rooftops like spilled honey, transforming the grey concrete into something almost beautiful. Marcus watched it with the patience of someone who understood that the best things in life revealed themselves slowly.'},{type:'paragraph',text:'He thought about the letter in his pocket. Three pages of careful handwriting, each word chosen with the precision of a surgeon and the tenderness of a poet.'},{type:'footer',text:'© 2024 All Rights Reserved'},{type:'paragraph',text:'There is a particular kind of courage required to sit with grief without trying to fix it. Marcus had learned this the hard way, through years of running — from city to city, from job to job, from one version of himself to another.'},{type:'chapter',text:'Chapter 2: The Library'},{type:'paragraph',text:'The old library on Adeniyi Jones Avenue had survived three floods, two attempted demolitions, and the slow march of digital transformation. It smelled of dust, old paper, and possibility.'},{type:'paragraph',text:'Marcus pushed open the heavy wooden door and stepped inside. The air was different here — cooler, quieter, thick with the accumulated wisdom of ten thousand books.'},{type:'header',text:'CONFIDENTIAL'},{type:'paragraph',text:'"You\'re back," she said, as if he had only stepped out for a moment. "I kept your books on hold." She gestured toward a shelf near the window.'},{type:'paragraph',text:'He ran his fingers along the titles. Each one was a doorway to a different version of himself — the eighteen-year-old who had devoured philosophy, the twenty-two-year-old who had fallen in love with poetry.'},{type:'paragraph',text:'Mrs. Adeyemi brought him tea without being asked. It was the small kindnesses that undid him — the quiet recognition that he was known, that he mattered.'},{type:'footer',text:'Page 24'},{type:'paragraph',text:'He sat in his old spot by the window and opened the first book. The words washed over him like water, and for the first time in years, he felt the tight knot in his chest begin to loosen.'},{type:'chapter',text:'Chapter 3: Words That Changed Everything'},{type:'paragraph',text:'The letter was still in his pocket. He could feel its edges pressing against his thigh, a constant reminder of everything he hadn\'t yet faced.'},{type:'paragraph',text:'Marcus pulled the letter out and unfolded it carefully. The paper was soft from handling, the ink slightly smudged in places where his mother\'s hand had trembled.'},{type:'paragraph',text:'Outside the library window, Lagos continued its magnificent chaos — the honking of okadas, the calls of street vendors, the laughter of children.'},{type:'paragraph',text:'His mother had written about forgiveness — not the grand, theatrical kind, but the quiet daily practice of releasing what you cannot change.'},{type:'paragraph',text:'When he finished reading, Marcus folded the letter and placed it back. The weight of it had changed. It was no longer a burden — it was a compass, pointing him toward the life he had been too afraid to live.'}];
-  render();};
-
-/* init */
-document.getElementById('ct').innerHTML=`<div class="empty"><div class="eic"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg></div><div class="et">VoxReader</div><div class="es">Upload a PDF book. Text is cleaned automatically. The player tracks each chapter like Audible — with per-chapter scrubbing, time tracking, and audio segments.</div><div class="ebt"><label class="bo"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>Upload PDF<input type="file" accept=".pdf" onchange="document.getElementById('fIn').files=this.files;document.getElementById('fIn').dispatchEvent(new Event('change'))"></label><button class="bf" onclick="loadDemo()"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Demo</button></div></div>`;
-lV();bSt();
+  // show welcome
+  document.getElementById('ct').innerHTML='<div style="text-align:center;padding:50px 16px"><div style="width:68px;height:68px;border-radius:18px;background:var(--acl);display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="1.5"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg></div><div style="font-size:19px;font-weight:600;margin-bottom:5px;font-family:var(--fb)">VoxReader</div><div style="font-size:13px;color:var(--t2);max-width:360px;margin:0 auto 18px;line-height:1.5">Upload a PDF, add your Google Cloud TTS key, and enjoy real background audio with lock screen controls.</div><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><label class="bo"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>Upload PDF<input type="file" accept=".pdf" style="display:none" onchange="document.getElementById(\'fIn\').files=this.files;document.getElementById(\'fIn\').dispatchEvent(new Event(\'change\'))"></label><button class="bf" onclick="loadDemo()"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Demo</button></div></div>';
+});
+})();
 </script>
 </body>
 </html>
