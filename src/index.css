@@ -1,0 +1,46 @@
+/* src/index.css */
+:root {
+  --bg: #0F0F14;
+  --s: #181820;
+  --t: #E4E0D7;
+  --t2: #6E6A62;
+  --t3: #3E3B36;
+  --ac: #D08C30;
+  --acl: rgba(208,140,48,.1);
+  --acg: rgba(208,140,48,.25);
+  --hl: rgba(208,140,48,.14);
+  --hla: rgba(208,140,48,.3);
+  --bd: rgba(255,255,255,.05);
+  --sh: rgba(0,0,0,.5);
+  --gl: rgba(15,15,20,.96);
+  --ch: #D08C30;
+  --pb: #252530;
+  --fb: 'Literata', serif;
+  --fu: 'DM Sans', sans-serif;
+  --fs: 18px;
+  --lh: 1.8;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--t);
+  font-family: var(--fu);
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: var(--bd); border-radius: 2px; }
+
+input, select, button { font-family: var(--fu); }
+
+a { color: var(--ac); }

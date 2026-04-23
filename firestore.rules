@@ -1,0 +1,52 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper: check if user is signed in
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Helper: check if user is admin
+    function isAdmin() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Books: anyone signed-in can read, any user can create, only owner or admin can update/delete
+    match /books/{bookId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.uploadedBy == request.auth.uid;
+      allow update: if isSignedIn(); // allow updating duration/status during generation
+      allow delete: if isAdmin() || resource.data.uploadedBy == request.auth.uid;
+
+      // Chapters subcollection
+      match /chapters/{chapterId} {
+        allow read: if isSignedIn();
+        allow write: if isSignedIn(); // any user can update chapters (to add audio URLs)
+      }
+    }
+
+    // Users: can only read/write their own doc
+    match /users/{userId} {
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow update: if isSignedIn() && request.auth.uid == userId && !('role' in request.resource.data.diff(resource.data).affectedKeys());
+      // Only admins can change roles
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+
+      // User's library (progress, bookmarks)
+      match /library/{bookId} {
+        allow read, write: if isSignedIn() && request.auth.uid == userId;
+      }
+    }
+
+    // App settings (TTS key) — only admins
+    match /app_settings/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+  }
+}
