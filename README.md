@@ -1,132 +1,140 @@
 # VoxReader
 
-Turn any PDF into an audiobook using Google Cloud TTS. Full-stack app with a shared library — books generated once are available to all users.
+Turn any PDF into an audiobook with AI-cleaned text and human-quality voice. Books generated once are shared across all users.
+
+## What's New (v2)
+
+- **AI-powered PDF cleanup** — Claude Haiku 4.5 reads raw PDF text, identifies real chapters vs section headers, fixes broken words ("inthe way" → "in the way"), and strips junk (headers, footers, page numbers, table of contents)
+- **One chapter at a time navigation** — no more endless scrolling. Sticky chapter picker, prev/next buttons, focused reading view
+- **True background generation** — playback starts as soon as paragraph 1 is ready, the rest generates while you listen
+- **Bookmark drawer** — slide-up drawer accessible from the player bar, one-tap jumps
 
 ## Architecture
 
-- **Frontend**: React + Vite (deployed on Vercel)
-- **Auth**: Firebase Auth (Google, Email, Member ID)
-- **Database**: Firestore (books, chapters, user progress, bookmarks)
-- **Storage**: Firebase Storage (MP3 audio files)
-- **TTS**: Google Cloud Text-to-Speech API
-- **Player**: HTML5 audio with MediaSession API (lock screen controls + background playback)
+| Layer | Tech |
+|---|---|
+| Frontend | React + Vite (Vercel) |
+| Backend | Vercel serverless function (`/api/process-pdf`) |
+| Auth | Firebase Auth |
+| Database | Firestore |
+| Audio storage | Firebase Storage |
+| AI cleanup | Anthropic Claude Haiku 4.5 |
+| TTS | Google Cloud Text-to-Speech |
+
+When you upload a PDF: browser → base64 encode → POST to `/api/process-pdf` (serverless) → `pdf-parse` extracts text → split into chunks → Claude cleans each chunk in parallel → returns structured JSON → frontend saves to Firestore.
+
+When you tap play: paragraph 1 generates via Google TTS → MP3 saved to Firebase Storage → `<audio>` plays it → meanwhile paragraphs 2-5 generate in parallel → next chapter pre-generates when you're 60% through.
 
 ## Setup
 
-### 1. Firebase Project Setup
+### 1. Firebase Console (project `ltn-voxreader`)
 
-Project `ltn-voxreader` is configured in `src/services/firebase.js`.
+Enable:
+- Authentication → Google + Email/Password
+- Firestore Database → production mode
+- Storage → production mode
 
-In Firebase Console, make sure these services are enabled:
-- Authentication → Google + Email/Password providers
-- Firestore Database
-- Storage
+Paste rules:
+- Firestore → Rules → paste `firestore.rules` → Publish
+- Storage → Rules → paste `storage.rules` → Publish
 
-### 2. Deploy Security Rules
+### 2. Google Cloud Console (same project)
 
-In Firebase Console:
-- **Firestore → Rules** → paste contents of `firestore.rules` → Publish
-- **Storage → Rules** → paste contents of `storage.rules` → Publish
+- APIs & Services → Library → enable **Cloud Text-to-Speech API**
+- Credentials → Create API Key
+- Restrict the key to Cloud Text-to-Speech API only
 
-### 3. Get Google Cloud TTS API Key
+### 3. Anthropic Console
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com) → select `ltn-voxreader`
-2. APIs & Services → Library → enable **Cloud Text-to-Speech API**
-3. APIs & Services → Credentials → **+ Create Credentials** → **API Key**
-4. Edit the key → API restrictions → Restrict key → select **Cloud Text-to-Speech API** only
-5. Copy the key (starts with `AIza...`)
-
-You'll paste this into the app's Admin panel after first login.
+- Get an API key at [console.anthropic.com](https://console.anthropic.com)
+- Cost: ~$0.10–$0.50 per book processed (Haiku 4.5 is very cheap)
 
 ### 4. Deploy to Vercel
 
-**Option A: via GitHub**
-1. Push this folder to a new GitHub repo
-2. Go to [vercel.com](https://vercel.com) → New Project → Import the repo
-3. Framework preset: **Vite** (auto-detected)
-4. Click **Deploy**
+Push this folder to GitHub, then on [vercel.com](https://vercel.com):
+- New Project → Import the repo
+- Framework: Vite (auto-detected)
+- Click Deploy
 
-**Option B: via Vercel CLI**
-```bash
-npm install -g vercel
-vercel
-```
+Vercel automatically deploys the `/api/process-pdf` serverless function. **No environment variables needed** — keys are stored in Firestore by admins and read by the function from the request body.
 
-## First Run
+### 5. First Run
 
-1. Open your deployed URL
-2. Sign in with Google
-3. **Make yourself admin**: Firebase Console → Firestore → `users` collection → find your doc → add field `role: "admin"` (string)
-4. Refresh the app — a ⚙ icon appears in the top bar
-5. Click ⚙ → Admin panel → paste your Google Cloud TTS API key → **Save** → **Test** (you should hear a confirmation)
-6. Click **Upload PDF** → select a book → fill in title/author → **Create Audiobook**
-7. On the book page, tap any chapter — audio generates paragraph-by-paragraph and plays
-8. On mobile, tap browser share → **Add to Home Screen** for a PWA experience
-
-## Background Playback
-
-Audio generated as real MP3 files plays through `<audio>` — this means playback continues when:
-- You switch browser tabs
-- You lock your phone
-- You switch to another app
-
-Lock screen shows play/pause/skip controls via the MediaSession API.
-
-## Adding More Admins
-
-In Admin panel → **+ Add Admin** → enter email → they become admin (they must sign in once first).
+1. Open your Vercel URL → sign in with Google
+2. Make yourself admin: Firebase Console → Firestore → `users` → your doc → add field `role: "admin"`
+3. Refresh app → ⚙ Admin icon appears
+4. Paste **both** keys:
+   - **Anthropic API key** (for AI cleanup) — Save
+   - **Google Cloud TTS key** (for voice) — Save → Test
+5. Click Upload PDF → wait 1–3 min for AI processing → Save to Library
+6. Tap any chapter → audio generates and plays in real time
 
 ## Cost Estimate
 
-| Service | Free Tier | Overage |
+| Service | Free Tier | At ~10 books/month |
 |---|---|---|
-| Google Cloud TTS (Standard) | 4M chars/month | $4/1M chars |
-| Google Cloud TTS (Neural2) | 1M chars/month | $16/1M chars |
-| Firebase Storage | 5 GB | $0.026/GB |
-| Firestore | 50K reads/day | Cheap |
-| Firebase Auth | Unlimited | Free |
-| Vercel Hobby | Free | Free |
+| Anthropic Haiku 4.5 | none | ~$2–5 (cleanup) |
+| Google Cloud TTS (Neural2) | 1M chars/month | ~$5–10 (voice) |
+| Firebase Storage | 5GB | Free |
+| Firestore | 50K reads/day | Free |
+| Firebase Auth | unlimited | Free |
+| Vercel Hobby | unlimited deploys | Free |
+| **Total** | | **~$5–15/month** |
 
-Typical monthly cost: **$0–$10**.
+## Project Structure
+
+```
+voxreader/
+├── api/
+│   └── process-pdf.js         # Vercel serverless function (PDF → AI cleanup)
+├── src/
+│   ├── App.jsx                # router
+│   ├── main.jsx
+│   ├── index.css
+│   ├── hooks/
+│   │   ├── useAuth.js
+│   │   └── usePlayer.js       # audio + background generation
+│   ├── services/
+│   │   ├── firebase.js
+│   │   ├── pdfProcessor.js    # calls /api/process-pdf
+│   │   ├── tts.js             # Google Cloud TTS calls
+│   │   └── bookService.js     # Firestore CRUD
+│   └── components/
+│       ├── Auth/LoginPage.jsx
+│       ├── Library/LibraryPage.jsx
+│       ├── Upload/UploadPage.jsx
+│       ├── BookView/BookPage.jsx     # one-chapter-per-page reader
+│       ├── Admin/AdminPage.jsx       # API keys, admin grants, book management
+│       └── Player/PlayerBar.jsx      # fixed bottom player + bookmark drawer
+├── firebase.json
+├── firestore.rules
+├── storage.rules
+├── firestore.indexes.json
+├── vercel.json                # SPA routing for client-side routes
+├── package.json
+└── README.md
+```
 
 ## Local Development
 
 ```bash
 npm install
-npm run dev   # http://localhost:5173
-npm run build # → dist/
+npm run dev   # http://localhost:5173 — but /api/process-pdf won't work locally
+              # use `vercel dev` to run serverless functions locally:
+              # npm i -g vercel && vercel dev
+npm run build
 ```
 
 ## Troubleshooting
 
-**"TTS API key not configured"** — Admin must set the key in Admin panel first.
+**"Anthropic API key not configured"** — Admin must paste key in ⚙ Admin → save.
 
-**"API key not valid"** — Make sure Cloud TTS API is enabled and the key isn't restricted to localhost only.
+**PDF processing hangs / times out** — Large books (500+ pages) can take 2–3 minutes. Vercel Hobby has 60s limit on serverless functions; for very large books you may need Vercel Pro or split the PDF.
 
-**Audio stops on iOS lock screen** — iOS requires starting audio from a user tap. Tap a paragraph/chapter to start (not auto).
+**"API key not valid" on TTS** — Make sure Cloud Text-to-Speech API is enabled and your key isn't restricted to disallow your Vercel domain.
 
-**PDFs look scattered** — Use text-based PDFs (not scanned images). Scanned PDFs need OCR.
+**Audio doesn't play in background on iOS** — iOS requires audio to start from a user tap (not auto-trigger). Tap the play button explicitly.
 
-## Project Structure
+**Bookmarks not syncing** — Bookmarks are stored per-user in Firestore. Make sure you're signed in.
 
-```
-src/
-├── main.jsx                # entry
-├── App.jsx                 # router (page state)
-├── index.css               # global CSS variables
-├── hooks/
-│   ├── useAuth.js          # Firebase auth
-│   └── usePlayer.js        # Audio player + MediaSession
-├── services/
-│   ├── firebase.js         # Firebase init
-│   ├── pdfExtract.js       # PDF text extraction
-│   ├── tts.js              # Google TTS calls
-│   └── bookService.js      # Firestore CRUD
-└── components/
-    ├── Auth/LoginPage.jsx
-    ├── Library/LibraryPage.jsx
-    ├── Upload/UploadPage.jsx
-    ├── BookView/BookPage.jsx
-    ├── Admin/AdminPage.jsx
-    └── Player/PlayerBar.jsx
-```
+**Chapter numbers wrong / sections counted as chapters** — This is what AI cleanup is supposed to fix vs the old regex approach. If it still happens, the AI may have misclassified — try a different PDF or report the issue.

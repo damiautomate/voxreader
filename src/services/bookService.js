@@ -1,4 +1,6 @@
 // src/services/bookService.js
+// Firestore operations for books, chapters, user progress, bookmarks
+
 import { db } from './firebase';
 import {
   collection, doc, getDoc, getDocs, setDoc, updateDoc,
@@ -8,42 +10,25 @@ import { generateAndUpload } from './tts';
 
 // ══════ BOOK CRUD ══════
 
-// Create a new book from extracted PDF data
-export async function createBook({ title, author, blocks, pageCount, userId, voiceName }) {
-  // Build chapters from blocks
-  const chapters = [];
-  let currentChapter = { title: 'Introduction', paragraphs: [], startPage: 1 };
-
-  const readableBlocks = blocks.filter(b => b.type === 'paragraph' || b.type === 'chapter');
-
-  for (const block of readableBlocks) {
-    if (block.type === 'chapter') {
-      if (currentChapter.paragraphs.length > 0) {
-        chapters.push(currentChapter);
-      }
-      currentChapter = { title: block.text, paragraphs: [], startPage: block.page || 1 };
-    } else {
-      currentChapter.paragraphs.push({
-        text: block.text,
-        page: block.page || 1,
-        audioUrl: null,
-        duration: 0
-      });
-    }
-  }
-  if (currentChapter.paragraphs.length > 0) chapters.push(currentChapter);
-
-  // Calculate word count
+// Create a new book from AI-processed chapter data
+export async function createBook({ title, author, chapters, pageCount, userId, voiceName }) {
+  // Calculate stats
   const wordCount = chapters.reduce((total, ch) =>
-    total + ch.paragraphs.reduce((t, p) => t + p.text.split(/\s+/).length, 0), 0);
+    total + ch.paragraphs
+      .filter(p => p.type === 'paragraph')
+      .reduce((t, p) => t + p.text.split(/\s+/).length, 0), 0);
 
-  // Create book document
+  const totalParagraphs = chapters.reduce((t, ch) =>
+    t + ch.paragraphs.filter(p => p.type === 'paragraph').length, 0);
+
+  // Create the book document
   const bookRef = await addDoc(collection(db, 'books'), {
     title: title || 'Untitled Book',
     author: author || 'Unknown Author',
     uploadedBy: userId,
     createdAt: serverTimestamp(),
     totalChapters: chapters.length,
+    totalParagraphs,
     totalDuration: 0,
     wordCount,
     pageCount: pageCount || 0,
@@ -52,13 +37,23 @@ export async function createBook({ title, author, blocks, pageCount, userId, voi
     coverColor: getRandomColor()
   });
 
-  // Save chapters as subcollection
+  // Save chapters as subcollection — note: paragraphs include type "paragraph" or "section"
   for (let i = 0; i < chapters.length; i++) {
+    const ch = chapters[i];
+    // Initialize each paragraph with empty audio fields
+    const paragraphsWithAudio = ch.paragraphs.map(p => ({
+      type: p.type,
+      text: p.text,
+      audioUrl: null,
+      duration: 0
+    }));
+
     await setDoc(doc(db, 'books', bookRef.id, 'chapters', `ch_${i}`), {
-      title: chapters[i].title,
+      title: ch.title,
+      number: ch.number || i + 1,
+      part: ch.part || null,
       index: i,
-      paragraphs: chapters[i].paragraphs,
-      startPage: chapters[i].startPage,
+      paragraphs: paragraphsWithAudio,
       totalDuration: 0,
       status: 'pending'
     });
@@ -67,60 +62,50 @@ export async function createBook({ title, author, blocks, pageCount, userId, voi
   return bookRef.id;
 }
 
-// Generate audio for a specific chapter
-export async function generateChapterAudio(bookId, chapterIdx, onProgress) {
+// Generate audio for a single paragraph in a chapter
+// Returns the updated chapter
+export async function generateParagraphAudio(bookId, chapterIdx, paraIdx) {
   const chRef = doc(db, 'books', bookId, 'chapters', `ch_${chapterIdx}`);
   const chSnap = await getDoc(chRef);
   if (!chSnap.exists()) throw new Error('Chapter not found');
 
   const chapter = chSnap.data();
-  if (chapter.status === 'complete') return chapter; // already done
+  const para = chapter.paragraphs[paraIdx];
 
-  // Get book's voice preference
+  // Skip non-paragraphs and already-generated paragraphs
+  if (!para || para.type !== 'paragraph') return chapter;
+  if (para.audioUrl) return chapter;
+
+  // Get book's voice
   const bookSnap = await getDoc(doc(db, 'books', bookId));
   const voiceName = bookSnap.data()?.voiceName || 'en-US-Neural2-D';
 
-  const paragraphs = [...chapter.paragraphs];
-  let totalDuration = 0;
+  // Generate
+  try {
+    const result = await generateAndUpload(para.text, bookId, chapterIdx, paraIdx, voiceName);
+    chapter.paragraphs[paraIdx].audioUrl = result.url;
+    chapter.paragraphs[paraIdx].duration = result.duration;
 
-  for (let i = 0; i < paragraphs.length; i++) {
-    if (paragraphs[i].audioUrl) {
-      // Already generated
-      totalDuration += paragraphs[i].duration || 0;
-      if (onProgress) onProgress(i + 1, paragraphs.length);
-      continue;
+    // Update chapter doc
+    await updateDoc(chRef, {
+      paragraphs: chapter.paragraphs,
+      totalDuration: chapter.paragraphs.reduce((s, p) => s + (p.duration || 0), 0)
+    });
+
+    // Check if chapter is now complete
+    const allDone = chapter.paragraphs.every(p =>
+      p.type !== 'paragraph' || p.audioUrl
+    );
+    if (allDone && chapter.status !== 'complete') {
+      await updateDoc(chRef, { status: 'complete' });
+      await updateBookDuration(bookId);
     }
-
-    try {
-      const result = await generateAndUpload(
-        paragraphs[i].text, bookId, chapterIdx, i, voiceName
-      );
-      paragraphs[i].audioUrl = result.url;
-      paragraphs[i].duration = result.duration;
-      totalDuration += result.duration;
-
-      // Save progress after each paragraph
-      await updateDoc(chRef, { paragraphs, totalDuration });
-    } catch (err) {
-      console.error(`Error generating p${i}:`, err);
-      paragraphs[i].audioUrl = null;
-      paragraphs[i].duration = 0;
-    }
-
-    if (onProgress) onProgress(i + 1, paragraphs.length);
+  } catch (err) {
+    console.error(`TTS failed for ch${chapterIdx}p${paraIdx}:`, err);
+    throw err;
   }
 
-  // Mark chapter complete
-  await updateDoc(chRef, {
-    paragraphs,
-    totalDuration,
-    status: 'complete'
-  });
-
-  // Update book total duration
-  await updateBookDuration(bookId);
-
-  return { ...chapter, paragraphs, totalDuration, status: 'complete' };
+  return chapter;
 }
 
 // Recalculate total book duration
@@ -158,17 +143,40 @@ export async function getBook(bookId) {
   return { id: snap.id, ...snap.data() };
 }
 
-// Get all chapters for a book
-export async function getChapters(bookId) {
+// Get all chapters for a book (lightweight - just titles, no paragraphs)
+export async function getChapterList(bookId) {
   const snap = await getDocs(
     query(collection(db, 'books', bookId, 'chapters'), orderBy('index'))
   );
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  return snap.docs.map(d => {
+    const data = d.data();
+    return {
+      id: d.id,
+      index: data.index,
+      title: data.title,
+      number: data.number,
+      part: data.part,
+      totalDuration: data.totalDuration || 0,
+      status: data.status,
+      paragraphCount: (data.paragraphs || []).filter(p => p.type === 'paragraph').length
+    };
+  });
+}
+
+// Get a single chapter with full paragraph content
+export async function getChapter(bookId, chapterIdx) {
+  const snap = await getDoc(doc(db, 'books', bookId, 'chapters', `ch_${chapterIdx}`));
+  if (!snap.exists()) return null;
+  return { id: snap.id, ...snap.data() };
+}
+
+// Mark book status as generating
+export async function setBookGenerating(bookId) {
+  await updateDoc(doc(db, 'books', bookId), { status: 'generating' });
 }
 
 // ══════ USER PROGRESS ══════
 
-// Save user's listening progress
 export async function saveProgress(userId, bookId, data) {
   await setDoc(doc(db, 'users', userId, 'library', bookId), {
     ...data,
@@ -176,13 +184,11 @@ export async function saveProgress(userId, bookId, data) {
   }, { merge: true });
 }
 
-// Get user's progress for a book
 export async function getProgress(userId, bookId) {
   const snap = await getDoc(doc(db, 'users', userId, 'library', bookId));
   return snap.exists() ? snap.data() : null;
 }
 
-// Get user's full library (books they've listened to)
 export async function getUserLibrary(userId) {
   const snap = await getDocs(
     query(collection(db, 'users', userId, 'library'), orderBy('lastListened', 'desc'))
@@ -196,17 +202,26 @@ export async function saveBookmark(userId, bookId, bookmark) {
   const ref = doc(db, 'users', userId, 'library', bookId);
   const snap = await getDoc(ref);
   const existing = snap.exists() ? (snap.data().bookmarks || []) : [];
-  existing.push({ ...bookmark, createdAt: Date.now() });
-  await setDoc(ref, { bookmarks: existing }, { merge: true });
+  existing.push({ ...bookmark, createdAt: new Date().getTime() });
+  await setDoc(ref, { bookmarks: existing, lastListened: serverTimestamp() }, { merge: true });
+  return existing;
 }
 
 export async function removeBookmark(userId, bookId, index) {
   const ref = doc(db, 'users', userId, 'library', bookId);
   const snap = await getDoc(ref);
-  if (!snap.exists()) return;
+  if (!snap.exists()) return [];
   const bm = snap.data().bookmarks || [];
   bm.splice(index, 1);
   await updateDoc(ref, { bookmarks: bm });
+  return bm;
+}
+
+export async function getBookmarks(userId, bookId) {
+  const ref = doc(db, 'users', userId, 'library', bookId);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) return [];
+  return snap.data().bookmarks || [];
 }
 
 // ══════ ADMIN ══════
@@ -215,8 +230,11 @@ export async function setTTSKey(apiKey) {
   await setDoc(doc(db, 'app_settings', 'tts'), { apiKey });
 }
 
+export async function setAnthropicKey(apiKey) {
+  await setDoc(doc(db, 'app_settings', 'anthropic'), { apiKey });
+}
+
 export async function deleteBook(bookId) {
-  // Delete chapters subcollection
   const chaps = await getDocs(collection(db, 'books', bookId, 'chapters'));
   for (const ch of chaps.docs) await deleteDoc(ch.ref);
   await deleteDoc(doc(db, 'books', bookId));

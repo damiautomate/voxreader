@@ -40,7 +40,7 @@ export default function App() {
       {page === 'upload' && <UploadPage user={user} onNavigate={navigate} />}
       {page === 'book' && pageData && <BookPage bookId={pageData} user={user} player={player} onNavigate={navigate} />}
       {page === 'admin' && isAdmin && <AdminPage onNavigate={navigate} />}
-      <PlayerBar player={player} onNavigate={navigate} />
+      <PlayerBar player={player} user={user} onNavigate={navigate} />
     </>
   );
 }
