@@ -2,9 +2,9 @@
 // Extracts text from PDF with smart paragraph merging and chapter detection
 import * as pdfjsLib from 'pdfjs-dist';
 
-// Use CDN worker to avoid bundling issues
-pdfjsLib.GlobalWorkerOptions.workerSrc = 
-  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs';
+// Use bundled worker via Vite's ?url import — guarantees version match with the library
+import pdfWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
 
 export async function extractPDF(file) {
   const buf = await file.arrayBuffer();
